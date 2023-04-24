@@ -1,6 +1,27 @@
-def tela_inicial(produtos_para_pesquisa):   
-    import PySimpleGUI as sg
+import PySimpleGUI as sg
+from funcoes.acessar_dados import *
+
+def tela_inicial(): 
+
+    """
+    Exibe a tela inicial do programa. 
     
+    A tela exibe uma lista de produtos para pesquisa, com 
+    caixas de seleção para marcar os produtos desejados.
+    Além disso, há botões para adicionar, editar e excluir produtos,
+    bem como um botão para avançar para a próxima tela.
+    
+    A função também permite configurar as opções do sistema,
+    como tempo de espera e limite de produtos pesquisados. 
+
+    Argumentos:
+    - produtos_para_pesquisa: lista de produtos a serem exibidos na tela inicial.
+
+    Retorno:
+    - Não há retorno, mas a função exibe a tela inicial do programa.
+    """
+    
+    # layout
     sg.theme("black")
     
     texto_principal  = 'Escolha produtos para pesquisar:'
@@ -8,21 +29,62 @@ def tela_inicial(produtos_para_pesquisa):
     font_secundario = ('Arial', 12)
     texto_secundario = 'Marque as  caixas de seleção para incluir os produtos na pesquisa.'
     texto_terciario  = 'Clique no produto para editar os critérios de pesquisa ou para excluir.'
+
+    # carregar as variaveis do sistema 
+    # (arquivo: dados/config.json):
+    #   - tempo_de_espera:
+    #    tempo que o navegaodr espera para pesquisar os elementos na página,
+    #    ou para carregar a página seguinte
+    #   - limite_de_produtos:
+    #    quantidade de produtos a serem salvos na base 
+    #    (arquivo: dados/resultados.csv) 
+    #    obs.: os arquivos carregados podem não corresponder aos arquivos
+    #    pesquisados pelo webscrap
+
+    dados = carregar_json('dados/config.json')
+    tempo_de_espera    = dados.get('tempo_de_espera')
+    limite_de_produtos = dados.get('limite_de_produtos')
+    
+    dados_produtos = carregar_json('dados/produtos.json')
+    conteudo_da_coluna = []
+
+    # Adicionar as caixas de seleções dos produtos
+    for chave in dados_produtos.keys():
+        conteudo_da_coluna.append([ sg.Checkbox(
+                            chave,
+                            key=chave,
+                            default = False)
+                       ])
+    coluna = sg.Column(conteudo_da_coluna, element_justification="l", size = (1000,400), background_color='lightgray')
     
     col1=[[ sg.Image( 'logo_pequeno.png')]]
-    col2=[[ sg.Button('Treinar Modelo'), sg.Button('Configurações')]]
+    col2=[
+            [ sg.Button('Treinar Modelo')],
+            [ sg.Button('Configurações') ]
+         ]
+    col3 = [ [sg.Column([
+            [ coluna ]
+            ], background_color='lightgray', pad=(0,5))] ]
 
+    # Define as configurações da janela
+    config = {
+        'background_color': 'lightgray',
+        'font': ('Helvetica', 12),
+        'size': (400, 200),
+        'element_padding': (10, 10)
+    }
 
     layout = [
-        [ [sg.Column(col1, element_justification='left' ), sg.Column(col2, element_justification='right')]],
+        [ [sg.Column(col1, element_justification='left' ), sg.Column(col2, element_justification='right')] ],
         [ sg.Text( texto_principal, font = font_principal) ],
         [],
-        
-        [ 
+                [ [sg.Column(col3, element_justification='left' )] ],
+        [  
+            # botões 
             sg.Button('Adicionar Produto'),
             sg.Button('Editar'),
             sg.Button('Excluir'),
-            sg.Text(' '*30),
+            sg.Text(' '*164),
             sg.Button('Avançar >>')
         ]
     ]
@@ -31,7 +93,7 @@ def tela_inicial(produtos_para_pesquisa):
     window = sg.Window('REGULATRON - Versão beta 0.2', 
                        layout, 
                        element_justification='left',
-                       size=(1024, 600)
+                       size=(1024, 600) #, **config
                       )
 
     # Loop para processar os "events" e atualizar os valores dos inputs
@@ -41,15 +103,127 @@ def tela_inicial(produtos_para_pesquisa):
         if event == sg.WIN_CLOSED : 
             break    
         
-    # fim da tela inicial
-    #editar palavras "yes-words" e "no-words" dos produtos        
+        if event == 'Configurações':  # painel de Configurações # ===========================
+            try:
 
-def editar_produtos_para_pesquisar(): 
+                # Criar uma janela de edição        
+                edit_config_layout = [
+                    [
+                        sg.Text('Tempo de Espera:'),
+                        sg.InputText(tempo_de_espera, key='tempo_de_espera', size=(5,1)),
+                        sg.Text('segundos'),
+                    ],
+                    [
+                        sg.Text('Limite de produtos pesquisados:'),
+                        sg.InputText(limite_de_produtos,
+                        key='limite_de_produtos' , size=(5,1)), sg.Button('Salvar', key='-SAVE-')]
+                ]
+
+                edit_config_window = sg.Window('Configurações do sistema', 
+                                                edit_config_layout,
+                                                element_justification='left',
+                                                size=(400, 100)
+                                                )
+
+                # Loop de eventos da janela de edição
+                while True:
+                    edit_config_event, edit_config_window_values = edit_config_window.read()
+
+                    if edit_config_event == sg.WINDOW_CLOSED:
+                        break
+
+                    elif edit_config_event == '-SAVE-':
+                        tempo_de_espera = edit_config_window_values['tempo_de_espera']
+                        limite_de_produtos = edit_config_window_values['limite_de_produtos']
+                        
+                        e = 0
+
+                        try:
+                            tempo_de_espera = int(tempo_de_espera)
+                        except:
+                            sg.popup('Digite um valor numérico para o Tempo de Espera.')
+                            e+=1
+
+                        try:
+                            limite_de_produtos = int(limite_de_produtos)
+                        except:
+                            sg.popup('Digite um valor numérico para o Limite de Produtos.')
+                            e+=1
+
+                        if e == 0:
+                            ## salva 
+                            dict_config = { "tempo_de_espera" : tempo_de_espera, "limite_de_produtos" : limite_de_produtos }
+                            salvar_json('dados/config.json', dict_config)
+                            break
+                
+                edit_config_window.close()
+
+            except Exception as e:
+                print(e)
+
+            pass
+        
+        if event == 'Adicionar Produto':
+            adicionar_produto()
+
+    window.close()
+    
+    # fim da tela inicial
+   
+
+def adicionar_produto():
+
+    # código para adicionar um novo produto
+
+    layout_add = [ # Define o layout da janela para adicionar um novo registro
+        [sg.Text('Nome do dispositivo:'), sg.Input(key='nome')],
+        [sg.Text('yes-words (separadas por vírgula):'), sg.Input(key='yes-words')],
+        [sg.Text('no-words (separadas por vírgula):'), sg.Input(key='no-words')],
+        [sg.Button('Adicionar'), sg.Button('Cancelar')]
+    ]
+
+    # Cria a janela
+    window_add = sg.Window('Novo registro', layout_add)
+
+    # Loop de eventos
+    while True:
+        event_add, values_add = window_add.read()
+
+        if event_add == sg.WINDOW_CLOSED or event_add == 'Cancelar':
+            break
+
+        elif event_add == 'Adicionar':
+            dados_produtos = carregar_json('dados/produtos.json')
+
+            nome = values_add['nome']
+            dados_produtos[nome] = {
+                'yes-words': values_add['yes-words'].split(','),
+                'no-words': values_add['no-words'].split(',')
+            }
+
+            salvar_json('dados/produtos.json', dados_produtos)
+
+            #atualiza a tabela ##### TODO -- fazer uma função para atualizar a tabela
+            dados_produtos = [[key, ','.join(dados_produtos[key]['yes-words']), ','.join(dados_produtos[key]['no-words'])] for key in dados_produtos]
+
+
+            # Exibir mensagem de confirmação
+            sg.popup(f'Registro "{nome}" adicionado com sucesso!', title='Sucesso')
+
+            # Fechar a janela
+            break
+
+    window_add.close()
+  
+
+
+
+def editar_produtos_para_pesquisar():   #adicionar produtos e editar  palavras "yes-words" e "no-words" dos produtos        
 
     # carrega os produtos
-    data = carregar_produtos()
+    dados = carregar_json('dados/produtos.json')
 
-    table_data = [[key, ','.join(data[key]['yes-words']), ','.join(data[key]['no-words'])] for key in data]
+    conteudo_tabela = [ [key, ','.join(dados[key]['yes-words']), ','.join(dados[key]['no-words'])] for key in dados ]
 
     layout = [
         # primeira linha - imagem do logotipo
@@ -57,7 +231,7 @@ def editar_produtos_para_pesquisar():
 
         # segunda linha
         [sg.Table(
-            values=table_data, 
+            values=conteudo_tabela, 
             headings=['Produto', 'Yes-words', 'No-words'],
             key='-TABLE-',
             justification='center',
@@ -97,53 +271,7 @@ def editar_produtos_para_pesquisar():
             except:
                 window['-ERROR-'].update('Selecione um produto para editar ou remover')
 
-        if event == '-ADD-':
-            try:
-                # código para adicionar um novo produto
 
-                layout_add = [ # Define o layout da janela para adicionar um novo registro
-                    [sg.Text('Nome do dispositivo:'), sg.Input(key='nome')],
-                    [sg.Text('yes-words (separadas por vírgula):'), sg.Input(key='yes-words')],
-                    [sg.Text('no-words (separadas por vírgula):'), sg.Input(key='no-words')],
-                    [sg.Button('Adicionar'), sg.Button('Cancelar')]
-                ]
-
-                # Cria a janela
-                window_add = sg.Window('Novo registro', layout_add)
-
-                # Loop de eventos
-                while True:
-                    event, values = window_add.read()
-
-                    if event == sg.WINDOW_CLOSED or event == 'Cancelar':
-                        break
-
-                    elif event == 'Adicionar':
-                        nome = values['nome']
-                        data[nome] = {
-                            'yes-words': values['yes-words'].split(','),
-                            'no-words': values['no-words'].split(',')
-                        }
-
-                        save_data('produtos_para_pesquisa.json', data)
-
-                        #atualiza a tabela ##### TODO -- fazer uma função para atualizar a tabela
-                        table_data = [[key, ','.join(data[key]['yes-words']), ','.join(data[key]['no-words'])] for key in data]
-                        window['-TABLE-'].update(values=table_data)
-
-                        # Exibir mensagem de confirmação
-                        sg.popup(f'Registro "{nome}" adicionado com sucesso!', title='Sucesso')
-
-                        # Fechar a janela
-                        break
-
-                window_add.close()
-
-            except Exception as e:
-                print(e)      
-
-
-            pass
 
         if event == '-EDIT-': 
     #        try:
@@ -195,9 +323,9 @@ def editar_produtos_para_pesquisar():
 
     #                 
 
-            pass # ========================================================================================= BUGADO
+            pass 
 
-        if event == '-REMOVE-':
+        if event == '-REMOVE-': # Excluir produto da pesquisa # ===========================
             try:
                 confirm = sg.popup_yes_no('Deseja excluir o produto da lista de pesquisa?')
                 if confirm == 'Yes':
@@ -224,6 +352,8 @@ def editar_produtos_para_pesquisar():
                 print(e)
 
             pass
+            
+            
 
     window.close()
     
