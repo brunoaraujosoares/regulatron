@@ -53,11 +53,12 @@ def tela_inicial():
         conteudo_da_coluna.append([ sg.Checkbox(
                             chave,
                             key=chave,
-                            default = False)
+                            default = False,
+                            size=(15,1))
                        ])
     coluna = sg.Column(conteudo_da_coluna, element_justification="l", size = (1000,400), background_color='lightgray')
     
-    col1=[[ sg.Image( 'logo_pequeno.png')]]
+    col1=[[ sg.Image( 'logo_pequeno.png'), sg.Text(' '*120)]]
     col2=[
             [ sg.Button('Treinar Modelo')],
             [ sg.Button('Configurações') ]
@@ -84,7 +85,8 @@ def tela_inicial():
             sg.Button('Adicionar Produto'),
             sg.Button('Editar'),
             sg.Button('Excluir'),
-            sg.Text(' '*164),
+            sg.Text(' '*120),
+            sg.Button('Exibir Produtos Capturados'),
             sg.Button('Avançar >>')
         ]
     ]
@@ -96,13 +98,48 @@ def tela_inicial():
                        size=(1024, 600) #, **config
                       )
 
-    # Loop para processar os "events" e atualizar os valores dos inputs
+    # Loop ===================================================================
     while True:
         event, values = window.read()
         
         if event == sg.WIN_CLOSED : 
             break    
         
+        if event == 'Editar':  # Editar produto # ===========================
+            
+            produtos_selecionados = [k for k, v in values.items() if v]
+
+
+            if len(produtos_selecionados) == 0: # testa se há algum produto foi selecionado
+                sg.popup('Nenhum produto foi selecionado')
+            
+            elif len(produtos_selecionados) > 1:
+                sg.popup_yes_no('Só é possível editar um produto por vez.')
+
+            else: # pegar o produto selecionado
+                editar_produto(window, produtos_selecionados[0])
+    
+
+        if event == 'Excluir':  # Excluir produtos # ===========================
+            
+            # testa se há checks selecionados
+            produtos_selecionados = set([k for k, v in values.items() if v])
+            if len(produtos_selecionados) == 0:
+                sg.popup('Nenhum produto foi selecionado')
+            
+            else:
+
+                confirm = sg.popup_yes_no('Deseja excluir os produtos selecionados?')
+                if confirm == 'Yes':
+
+                    for item in produtos_selecionados:
+                        del dados_produtos[item]    
+                    
+                    salvar_json('dados/produtos.json', dados_produtos)
+                    
+                    window.close()
+                    tela_inicial()
+
         if event == 'Configurações':  # painel de Configurações # ===========================
             try:
 
@@ -164,26 +201,68 @@ def tela_inicial():
             pass
         
         if event == 'Adicionar Produto':
-            adicionar_produto()
+            adicionar_produto(window)
 
     window.close()
     
     # fim da tela inicial
    
 
-def adicionar_produto():
+def editar_produto(janela, produto):
+
+    dados_produtos = carregar_json('dados/produtos.json')
+    produto_dict = dados_produtos[produto]
+
+    # pegar o produto a partir do dict
+    yes_words = produto_dict['yes-words']
+    no_words = produto_dict['no-words']
+
+    # Criar uma janela de edição        
+    layout_edit = [
+        [sg.Text('Nome do produto:'), sg.InputText(produto, key='nome')],
+        [sg.Text('yes-words (separadas por vírgula):'), sg.InputText(yes_words, key='yes-words')],
+        [sg.Text('no-words (separadas por vírgula):'), sg.InputText(no_words, key='no-words')],
+        [sg.Button('Salvar', key='-SAVE-'), sg.Button('Cancelar')]
+    ]
+
+    window_edit = sg.Window('Editar produto', layout_edit)
+
+    # Loop de eventos da janela de edição
+    while True:
+        event_edit, values_edit = window_edit.read()
+
+        if event_edit == sg.WINDOW_CLOSED or event_edit == 'Cancelar':                
+            break
+
+        elif event_edit == '-SAVE-':
+
+            del dados_produtos[produto]
+            nome = values_edit['nome']
+            dados_produtos[nome] = {
+                'yes-words': values_edit['yes-words'].split(','),
+                'no-words' : values_edit['no-words'].split(',')
+            }
+
+            # print(dados_produtos)
+            salvar_json('dados/produtos.json', dados_produtos)
+            janela.close()
+            tela_inicial()
+
+    window_edit.close()
+
+def adicionar_produto(janela):
 
     # código para adicionar um novo produto
 
     layout_add = [ # Define o layout da janela para adicionar um novo registro
-        [sg.Text('Nome do dispositivo:'), sg.Input(key='nome')],
+        [sg.Text('Nome do produto:'), sg.Input(key='nome')],
         [sg.Text('yes-words (separadas por vírgula):'), sg.Input(key='yes-words')],
         [sg.Text('no-words (separadas por vírgula):'), sg.Input(key='no-words')],
         [sg.Button('Adicionar'), sg.Button('Cancelar')]
     ]
 
     # Cria a janela
-    window_add = sg.Window('Novo registro', layout_add)
+    window_add = sg.Window('Novo produto', layout_add)
 
     # Loop de eventos
     while True:
@@ -203,16 +282,10 @@ def adicionar_produto():
 
             salvar_json('dados/produtos.json', dados_produtos)
 
-            #atualiza a tabela ##### TODO -- fazer uma função para atualizar a tabela
-            dados_produtos = [[key, ','.join(dados_produtos[key]['yes-words']), ','.join(dados_produtos[key]['no-words'])] for key in dados_produtos]
-
-
-            # Exibir mensagem de confirmação
-            sg.popup(f'Registro "{nome}" adicionado com sucesso!', title='Sucesso')
-
-            # Fechar a janela
-            break
-
+            window_add.close()
+            janela.close()
+            tela_inicial()
+            
     window_add.close()
   
 
@@ -325,33 +398,6 @@ def editar_produtos_para_pesquisar():   #adicionar produtos e editar  palavras "
 
             pass 
 
-        if event == '-REMOVE-': # Excluir produto da pesquisa # ===========================
-            try:
-                confirm = sg.popup_yes_no('Deseja excluir o produto da lista de pesquisa?')
-                if confirm == 'Yes':
-
-                    # Obter a linha selecionada na tabela
-                    selected_row = values['-TABLE-']
-
-                    if selected_row != []:
-
-                        # Obter a linha selecionada
-                        selected_row = values['-TABLE-'][0]
-
-                        # remover os dados do dict
-                        data.pop(  table_data[selected_row][0]  )
-                        save_data('produtos_para_pesquisa.json', data)
-
-                        # Remover a linha dos dados da tabela
-                        table_data.pop(selected_row)
-
-                        # Atualizar a tabela
-                        window['-TABLE-'].update(values=table_data)
-
-            except Exception as e:
-                print(e)
-
-            pass
             
             
 
