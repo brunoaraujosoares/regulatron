@@ -105,6 +105,22 @@ def tela_inicial():
         if event == sg.WIN_CLOSED : 
             break    
         
+        
+        if event == 'Treinar Modelo':  # Treinar Modelo # ===================
+                sg.popup('BREVE DISPONÍVEL')
+
+
+        if event == 'Avançar >>': # Avançar >> ==========================
+            produtos_selecionados = [k for k, v in values.items() if v]
+
+            if len(produtos_selecionados) == 0: # testa se há algum produto foi selecionado
+                sg.popup('Nenhum produto foi selecionado')
+            
+            else:
+                window.close()
+                escolher_plataformas(produtos_selecionados)
+        
+
         if event == 'Editar':  # Editar produto # ===========================
             
             produtos_selecionados = [k for k, v in values.items() if v]
@@ -114,7 +130,7 @@ def tela_inicial():
                 sg.popup('Nenhum produto foi selecionado')
             
             elif len(produtos_selecionados) > 1:
-                sg.popup_yes_no('Só é possível editar um produto por vez.')
+                sg.popup('Só é possível editar um produto por vez.')
 
             else: # pegar o produto selecionado
                 editar_produto(window, produtos_selecionados[0])
@@ -214,8 +230,8 @@ def editar_produto(janela, produto):
     produto_dict = dados_produtos[produto]
 
     # pegar o produto a partir do dict
-    yes_words = produto_dict['yes-words']
-    no_words = produto_dict['no-words']
+    yes_words = ",".join(produto_dict["yes-words"])
+    no_words = ",".join(produto_dict["no-words"])
 
     # Criar uma janela de edição        
     layout_edit = [
@@ -245,8 +261,10 @@ def editar_produto(janela, produto):
 
             # print(dados_produtos)
             salvar_json('dados/produtos.json', dados_produtos)
+            window_edit.close()
             janela.close()
             tela_inicial()
+            
 
     window_edit.close()
 
@@ -287,119 +305,82 @@ def adicionar_produto(janela):
             tela_inicial()
             
     window_add.close()
-  
+
+# fim da tela inicial ================================================================
+
+def escolher_plataformas(produtos_selecionados):
+
+    # layout
+    sg.theme("black")
+
+    texto_principal  = 'Escolha as plataforma para pesquisar:'
+    font_principal   = ('Arial', 18)
+    font_secundario  = ('Arial', 12)
+    font_terciario   = ('Arial', 10)
+    texto_secundario = 'Atenção! Varrer múltiplas plataformas pode levar muito tempo.'
+    texto_terciario  = 'Marque as caixas de seleção para pesquisar nas plataformas.'
+
+    dados = carregar_json('dados/config.json')
+    tempo_de_espera    = dados.get('tempo_de_espera')
+    limite_de_produtos = dados.get('limite_de_produtos')
+    
+    dados_produtos = carregar_json('dados/produtos.json')
 
 
+    conteudo_da_coluna = []
 
-def editar_produtos_para_pesquisar():   #adicionar produtos e editar  palavras "yes-words" e "no-words" dos produtos        
+    # Adicionar as caixas de seleções das plataformas
+    conteudo_da_coluna.append([ sg.Checkbox(
+                            'Mercado Livre',
+                            key='MERCADOLIVRE',
+                            default = False,
+                            size=(119,1))
+                       ])
 
-    # carrega os produtos
-    dados = carregar_json('dados/produtos.json')
+    conteudo_da_coluna.append([ sg.Checkbox(
+                            'Carrefour',
+                            key='CARREFOUR',
+                            default = False,
+                            size=(119,1))
+                       ])
 
-    conteudo_tabela = [ [key, ','.join(dados[key]['yes-words']), ','.join(dados[key]['no-words'])] for key in dados ]
+    coluna = sg.Column(conteudo_da_coluna, element_justification="l", size = (1000,376), background_color='lightgray')
 
     layout = [
-        # primeira linha - imagem do logotipo
-        [sg.Image('img/logo.png', size=(781,240))],
-
-        # segunda linha
-        [sg.Table(
-            values=conteudo_tabela, 
-            headings=['Produto', 'Yes-words', 'No-words'],
-            key='-TABLE-',
-            justification='center',
-            num_rows=10, 
-            auto_size_columns=False,
-            def_col_width=26,
-            enable_events=True)
-
-        ],
-
-        # terceira linha
-        [sg.Button('Adicionar produto', key='-ADD-'),
-         sg.Button('Editar produto', key='-EDIT-', disabled=True),
-         sg.Button('Remover produto', key='-REMOVE-', disabled=True),
-         sg.Button('Voltar para a tela inicial', key='-VOLTAR-')]
+            [ [ sg.Image( 'logo_pequeno.png'), sg.Text(' '*120)],
+            [ sg.Text( texto_principal, font = font_principal) ],
+            [ sg.Text( texto_terciario, font = font_terciario) ],
+            [ sg.Text( texto_secundario, font = font_secundario) ],
+            [],
+            [ coluna ],
+            [
+                # botões 
+                sg.Button('<< Voltar à tela inicial'),
+                sg.Text(' '*175),
+                sg.Button('Iniciar Varredura >>')
+            ]
+        ]
     ]
+        
+    # Cria a janela do programa
+    window = sg.Window('REGULATRON - Versão beta 0.2', 
+                       layout, 
+                       element_justification='left',
+                       size=(1024, 600) #, **config
+                      )
 
-    # Configurações da janela
-    sg.theme('Black')   # tema escuro
-    window = sg.Window('Regulatron - Editar produtos da pesquisa', layout, size=(1024, 600), element_justification="c")
-    
+    # Loop ===================================================================
     while True:
         event, values = window.read()
-        if event == sg.WINDOW_CLOSED:
-            break
+        
+        if event == sg.WIN_CLOSED : 
+            break    
 
-        if event== '-VOLTAR-':            
+        if event == '<< Voltar à tela inicial':
             window.close()
-            escolher_produtos_para_pesquisar()
-
-            
-        if event == '-TABLE-':
-            try:
-                row_index = window['-TABLE-'].get()[0]
-                window['-EDIT-'].update(disabled=False)
-                window['-REMOVE-'].update(disabled=False)
-            except:
-                window['-ERROR-'].update('Selecione um produto para editar ou remover')
-
-
-
-        if event == '-EDIT-': 
-    #        try:
-
-            # Obter a linha selecionada na tabela
-            selected_row = values['-TABLE-']
-
-            if selected_row != []:
-
-                selected_row = values['-TABLE-'][0]
-
-                # código para editar o produto selecionado
-
-                # Criar uma janela de edição        
-                edit_layout = [
-                    [sg.Text('Nome do dispositivo:'), sg.InputText(table_data[selected_row][0], key='nome')],
-                    [sg.Text('yes-words (separadas por vírgula):'), sg.InputText(table_data[selected_row][1], key='yes-words')],
-                    [sg.Text('no-words (separadas por vírgula):'), sg.InputText(table_data[selected_row][2], key='no-words')],
-                    [sg.Button('Salvar', key='-SAVE-'), sg.Button('Cancelar')]
-                ]
-
-                edit_window = sg.Window('Editar linha', edit_layout)
-
-                # Loop de eventos da janela de edição
-                while True:
-                    edit_event, edit_values = edit_window.read()
-
-                    if event == sg.WINDOW_CLOSED or edit_event == 'Cancelar':                
-                        break
-
-                    elif edit_event == '-SAVE-':
-
-                        data[ edit_values['nome'] ] = {
-                            'yes-words': edit_values['yes-words'].split(','),
-                            'no-words': edit_values['no-words'].split(',')
-                        }
-
-                        save_data('produtos_para_pesquisa.json', data)
-
-                        #atualiza a tabela ##### TODO -- fazer uma função para atualizar a tabela
-                        table_data = [[key, ','.join(data[key]['yes-words']), ','.join(data[key]['no-words'])] for key in data]
-                        window['-TABLE-'].update(values=table_data)
-                        break
-
-                edit_window.close()
-
-    #        except Exception as e:
-    #            print(e)
-
-    #                 
-
-            pass 
-
-            
+            tela_inicial()
             
 
     window.close()
     
+# fim da tela de escolher plataformas ===================================
