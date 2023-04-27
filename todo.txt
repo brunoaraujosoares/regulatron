@@ -1,0 +1,48 @@
+1. Pesquisar os produtos:
+
+	Produtos da primeira versão:
+	{	# pesquisar as marcas no menu do mercado livre e listar para o fiscal selecionar ,
+		{ 'TV Box' : {
+			'yes-words' : ['BTV', 'HTV', 'MK9'],
+			no-words  : ["hack para","conjunto sala de estar",'suporte de controle remoto"]
+			}
+
+
+#		{ Carregador de bateria de celular : },
+#		{ Celular : },
+#		{ Bloqueador de celular Jammer:  },
+#		{ Bloqueador de celular (Jammer): },
+#		{ Jammer: },
+		{ "flipper zero" : {
+				"yes-words" : ["wifi", "wifi"],
+				no-words  : ["intelbras", "aquario","Cordless Hair Trimmer","trimmer","hair trimmer"]
+			}
+		}
+	}
+
+
+2. Indicar a quantidade de produtos localizados em cada plataforma para cada critério de pesquisa
+
+3. criar uma tela de configuração 
+	variáveis:
+		tempo de espera
+		limitar resultados (máximo de links acessados)
+
+
+4. Verificar a possibiliade de fazer acessos distribuidos (com ips distintos)
+
+
+
+Funcionalidade: O aplicativo identifica todos os anúncios de um produto, por exemplo TV Box, e depois o fiscal vai indicando o que passa e o que não passa.
+
+
+O fiscal vai identificar no próprio programa os produtos de interesse nas primeiras interações e a lista de palavras será construída. 
+
+Depois vou filtrando o que é ou não homologado.
+
+
+Implementar plataformas:
+1. Mercado Livre - 19/04
+2. Carrefour- 03/05
+3. Amazon  - 17/05
+4. Shopee - 31/05.
