@@ -243,8 +243,8 @@ def editar_produto(janela, produto):
     # Criar uma janela de edição        
     layout_edit = [
         [sg.Text('Nome do produto:'), sg.InputText(produto, key='nome')],
-        [sg.Text('yes-words (separadas por vírgula):'), sg.InputText(yes_words, key='yes-words')],
-        [sg.Text('no-words (separadas por vírgula):'), sg.InputText(no_words, key='no-words')],
+        [sg.Text('Black List (separadas por vírgula):'), sg.InputText(yes_words, key='yes-words')],
+        [sg.Text('White List (separadas por vírgula):'), sg.InputText(no_words, key='no-words')],
         [sg.Button('Salvar', key='-SAVE-'), sg.Button('Cancelar')]
     ]
 

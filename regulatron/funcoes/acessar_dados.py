@@ -58,7 +58,26 @@ def salvar_json(arquivo, dados):
 
 
 
-def salvar_dict_para_csv(dicionario, arquivo): # obrigado, chatGPTnão sei o que seria de mim sem você 
+def salvar_dict_para_csv(dicionario, arquivo): 
+
+    # identificando produtos que já foram capturados
+    set_url = set(dicionario['url']) 
+
+    with open(arquivo, 'r', newline='', encoding='iso-8859-1') as arquivo_csv:
+        leitor_csv = csv.DictReader(arquivo_csv)
+        linhas_existentes = []
+
+        for linha in leitor_csv:
+            
+            if not linha['url'] in set_url:
+                print(f"A URL {url} existe no conjunto de URLs!", linha)
+                # Atualiza a linha, se necessário
+                linhas_existentes.append(linha)
+
+    print(linhas_existentes)
+
+    return
+
     # Lista das chaves do dicionário
     colunas = list(dicionario.keys())
 

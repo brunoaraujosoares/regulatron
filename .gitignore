@@ -128,3 +128,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 tunga_carrefor.ipynb
+*.zip
+regulatron/dados/config.json
+regulatron/dados/config.json
+regulatron/dados/produtos.json
+regulatron/dados/resultado_mercado_livre - BTV.csv
+regulatron/dados/resultado_mercado_livre - Copia.csv
