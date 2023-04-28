@@ -138,7 +138,10 @@ def capturar_detalhes_produtos_carrefour(dicionario, driver):
                 preco = ''
                 
             try:
-                descricao      = driver.find_element(By.CLASS_NAME, 'vtex-store-components-3-x-productDescriptionContainer').text[0:500]
+                        #<div class="vtex-store-components-3-x-productDescriptionText c-muted-1"><div style="display: contents;">Fonte Bivolt 5v 2a Receptor Btv-b8 Btv-b9 Btv-b10 Btv-b11fonte Bivolt 5v 2a Receptor Btv-b8 Btv-b9 Btv-b10 Btv-b11 ==fonte De Energia Para Receptor Btv (substitui A Original) Com As Mesmas Características, Fonte Bivolt De Excelente Custo Beneficio.==funciona Nos Modelos:btv B8btv B9btv Bxbtv 10btv B11btv E9 Expressbtv E10 Express==tv Box 4k==tv Box Inova==tv Box Fullhdbtv B8btv B9btv Bxbtv 10btv E9 Express==características:voltagem:: Bivolt 110-220 Voutput: 5v/ 2a==potencia 10w Real==plug Conector P4==itens Inclusos01 - Fonte De Energia==produto Novo==imagem Ilustrativa==garantia 90 Dias==fabricantejs Technology==</div></div>
+                        #<div style="display: contents;">Fonte Bivolt 5v 2a Receptor Btv-b8 Btv-b9 Btv-b10 Btv-b11fonte Bivolt 5v 2a Receptor Btv-b8 Btv-b9 Btv-b10 Btv-b11 ==fonte De Energia Para Receptor Btv (substitui A Original) Com As Mesmas Características, Fonte Bivolt De Excelente Custo Beneficio.==funciona Nos Modelos:btv B8btv B9btv Bxbtv 10btv B11btv E9 Expressbtv E10 Express==tv Box 4k==tv Box Inova==tv Box Fullhdbtv B8btv B9btv Bxbtv 10btv E9 Express==características:voltagem:: Bivolt 110-220 Voutput: 5v/ 2a==potencia 10w Real==plug Conector P4==itens Inclusos01 - Fonte De Energia==produto Novo==imagem Ilustrativa==garantia 90 Dias==fabricantejs Technology==</div>
+
+                descricao      = driver.find_element(By.CLASS_NAME, 'vtex-store-components-3-x-productDescriptionText').text[0:500]
             except:
                 descricao      = ''
 

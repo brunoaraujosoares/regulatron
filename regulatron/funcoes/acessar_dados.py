@@ -58,52 +58,59 @@ def salvar_json(arquivo, dados):
 
 
 
-def salvar_dict_para_csv(dicionario, arquivo): 
+def salvar_dict_para_csv(dicionario, arquivo_csv): 
+    import pandas as pd
 
-    # identificando produtos que já foram capturados
-    set_url = set(dicionario['url']) 
+    df = pd.read_csv(arquivo_csv, sep=';', encoding='iso-8859-1')
+    df = df.loc[ ~ df['url'].isin(dicionario['url']) ]
+    df_novo = pd.DataFrame(dicionario)
+    df = pd.concat([df_novo, df], ignore_index = True)
+    df.to_csv(arquivo_csv, sep=';', encoding='iso-8859-1', index = False)
 
-    with open(arquivo, 'r', newline='', encoding='iso-8859-1') as arquivo_csv:
-        leitor_csv = csv.DictReader(arquivo_csv)
-        linhas_existentes = []
+# # Exemplo de uso:
+# dicionario = {
+#     'produto_pesquisado': ['btv', 'tv'],
+#     'titulo_produto': ['Fonte Bivolt 5v 2a Receptor Btv-b8 Btv-b9 Btv-b10 Btv-b11', 'TV LED 50"'],
+#     'id_vendedor': ['', ''],
+#     'preco': ['', ''],
+#     'quantidade': [1, 2],
+#     'descricao': ['', ''],
+#     'homologado': ['CANDIDATO', ''],
+#     'plataforma': ['Carrefour', ''],
+#     'url': ['https://www.carrefour.com.br/fontebivolt5v2areceptorbtvb8btvb9btvb10btvb11-mp923947190/p', 'https://www.carrefour.com.br/tv-led-50-mp923947191/p']
+# }
 
-        for linha in leitor_csv:
-            
-            if not linha['url'] in set_url:
-                print(f"A URL {url} existe no conjunto de URLs!", linha)
-                # Atualiza a linha, se necessário
-                linhas_existentes.append(linha)
+# arquivo_csv = 'dados.csv'
+# adicionar_atualizar_linhas_csv(dicionario, arquivo_csv)
 
-    print(linhas_existentes)
+ 
+ 
+    # # Lista das chaves do dicionário
+    # colunas = list(dicionario.keys())
 
-    return
-
-    # Lista das chaves do dicionário
-    colunas = list(dicionario.keys())
-
-    # Abre o arquivo CSV em modo de escrita
-    with open(arquivo, 'w', newline='', encoding='iso-8859-1') as arquivo_csv:
-        writer = csv.DictWriter(arquivo_csv, fieldnames=colunas, delimiter=';')
+    # # Abre o arquivo CSV em modo de escrita
+    # with open(arquivo, 'w', newline='', encoding='iso-8859-1') as arquivo_csv:
+    #     writer = csv.DictWriter(arquivo_csv, fieldnames=colunas, delimiter=';')
         
-        # Escreve os cabeçalhos das colunas
-        writer.writeheader()
+    #     # Escreve os cabeçalhos das colunas
+    #     writer.writeheader()
         
-        # Cria uma lista de listas com os valores do dicionário
-        valores_colunas = list(dicionario.values())
+    #     # Cria uma lista de listas com os valores do dicionário
+    #     valores_colunas = list(dicionario.values())
 
-        # Obtém o tamanho máximo das colunas
-        tamanho_maximo = max(len(coluna) for coluna in valores_colunas)
+    #     # Obtém o tamanho máximo das colunas
+    #     tamanho_maximo = max(len(coluna) for coluna in valores_colunas)
 
-        # Preenche as colunas com valores em branco para ter o mesmo tamanho
-        valores_preenchidos = [coluna + [''] * (tamanho_maximo - len(coluna)) for coluna in valores_colunas]
+    #     # Preenche as colunas com valores em branco para ter o mesmo tamanho
+    #     valores_preenchidos = [coluna + [''] * (tamanho_maximo - len(coluna)) for coluna in valores_colunas]
 
-        # Transpõe as colunas preenchidas
-        colunas_preenchidas = zip(*valores_preenchidos)
+    #     # Transpõe as colunas preenchidas
+    #     colunas_preenchidas = zip(*valores_preenchidos)
         
-        # Escreve os dados de cada coluna
-        for coluna in colunas_preenchidas:
-            coluna_convertida = [valor.encode('latin-1', 'ignore').decode('latin-1') if isinstance(valor, str) else valor for valor in coluna]
-            writer.writerow(dict(zip(colunas, coluna_convertida)))
+    #     # Escreve os dados de cada coluna
+    #     for coluna in colunas_preenchidas:
+    #         coluna_convertida = [valor.encode('latin-1', 'ignore').decode('latin-1') if isinstance(valor, str) else valor for valor in coluna]
+    #         writer.writerow(dict(zip(colunas, coluna_convertida)))
     
 def carrega_produtos_capturados(arquivo):
     with open(arquivo, 'r', encoding='iso-8859-1') as file:
