@@ -86,6 +86,13 @@ def salvar_dict_para_csv(dicionario, arquivo): # obrigado, chatGPTnão sei o que
             coluna_convertida = [valor.encode('latin-1', 'ignore').decode('latin-1') if isinstance(valor, str) else valor for valor in coluna]
             writer.writerow(dict(zip(colunas, coluna_convertida)))
     
+def carrega_produtos_capturados(arquivo):
+    with open(arquivo, 'r', encoding='iso-8859-1') as file:
+        reader = csv.reader(file, delimiter = ';')
+        data = list(reader)
+        data = data[1:]
+    
+    return data
 
 # def salvar_dict_para_csv(dicionario, arquivo):
 #     print(dicionario)
@@ -110,17 +117,3 @@ def salvar_dict_para_csv(dicionario, arquivo): # obrigado, chatGPTnão sei o que
     
     # print(f'O arquivo CSV "{arquivo}" foi salvo com sucesso!')
 
-# def carrega_produtos_capturados():
-#     with open('dados/resultados.csv', 'r', encoding='iso-8859-1') as file:
-#         reader = csv.reader(file, delimiter = ';')
-#         data = list(reader)
-#         data = data[1:]
-        
-#         nova_data = []
-#         for lista in data:
-#             url = lista[1] # guarda o segundo elemento em uma variável
-#             del lista[1], lista[5]
-#             lista.append(url)
-#             nova_data.append(lista)
-            
-#     return nova_data

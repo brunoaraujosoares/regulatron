@@ -110,10 +110,11 @@ def tela_inicial():
         
         
         if event == 'Treinar Modelo':  # Treinar Modelo # ===================
-                sg.popup('BREVE DISPONÍVEL')
+            sg.popup('BREVE DISPONÍVEL')
         
         if event == 'Exibir Produtos Capturados':  # Treinar Modelo # ===================
-                sg.popup('Breve Disponível')
+            window.close()
+            listar_produtos_capturados()   
 
 
         if event == 'Avançar >>': # Avançar >> ==========================
@@ -399,8 +400,8 @@ def escolher_plataformas(produtos_selecionados):
 
                 if 'CARREFOUR' in plataformas_selecionadas:
                     varrer_carrefour(produtos_selecionados)
-                # window.close()
-                # listar_produtos_capturados()
+                window.close()
+                listar_produtos_capturados()
 
     window.close()
     
@@ -408,51 +409,124 @@ def escolher_plataformas(produtos_selecionados):
 
 
 def listar_produtos_capturados():
-    
-    sg.popup('Breve Disponível')
 
-    data = carrega_produtos_capturados()
-    
-    
-    # Define o layout da janela
+    data = carrega_produtos_capturados('dados/resultado_mercado_livre.csv')
+   
+    sg.theme('Black')
+
+    texto_principal = 'Produtos Capturados'
+    font_principal = ("Arial", 24)
+    font_selecao   = ("Arial", 16)
+
+    subtotal_produtos   = resultados_exibidos   = len(data)
+    subtotal_candidados = resultados_candidados = sum(1 for elemento in data if 'CANDIDATO' in elemento)
+    plataformas = ['Todas', 'Mercado Livre', 'Carrefour']
+    # produtos = ['Todos','btv','celular','flipper zero', 'tv_box']
+    produtos = carregar_json('dados/produtos.json')
+    lista = ['Todos']
+    lista.extend(list(produtos.keys()))
+    produtos = lista
+
+    # Definindo o layout da janela
     layout = [
-            # primeira linha - imagem do logotipo 
-                [sg.Image( 'img/logo_pequeno.png', size=(352,78) ) ],
-                [ sg.Text( f'Resultados exibidos na plataforma: {dict_resultados}' )],
-                [ sg.Text( 'Resultados capturados:' , font = font_selecao )],
-                [sg.Table(
-                    values=data,
-                    headings=['produto', 'titulo', 'vendedor', 'preco', 'qtd','homologado', 'url'],
-                    key='-TABLE-',
-                    enable_events=True,
-                    auto_size_columns=False,
-                    num_rows=20,
-                    justification='left',
-                    col_widths=[15, 35, 12, 6, 6, 15,30],  
-                )
-            ],
-            [  
-              sg.Button('Editar produto', key='-EDITAR-', disabled=True),
-              sg.Button('ver página do produto', key='-ACESSAR-', disabled=True),
-              sg.Button("Treinar Modelo", disabled=True),
-              sg.Button("Nova Varredura"),
+                # primeira linha
+                [sg.Column(
+                    [[ sg.Text(texto_principal, font = font_principal, justification="l") ]],
+                    size=(600, 50)
+                ), 
+                sg.Column(
+                    [
+    #                      [ sg.Text(f'Total de produtos em todas as plataformas: {total_produtos}') ],
+    #                      [ sg.Text(f'Produtos Candidatos: {total_candidados}') ]
+                    ])
+                ],
+    #             [
+    #                 sg.Text('-'* 250)
+    #             ],
+                # segunda linha
+                [sg.Column([
+                    [   
+                        sg.Text('Palataforma: '),
+                        sg.Combo(plataformas, default_value='Todas', size = (26, None) )
+                    ],
+                    [
+                        sg.Text(f'Subotal de produtos: ', size = (28, None) ),
+                        sg.Input(subtotal_produtos, key = 'subtotal_produtos', size = (7,None), justification='r')
+                    ],
+                    [
+                        sg.Text(f'Subtotal de Produtos Candidatos: ', size = (28, None) ) ,
+                        sg.Input(subtotal_candidados, key = 'subtotal_candidados', size = (7,None), justification='r'),
+                    ]
+                    
+                ],
+                    size=(305, 85), background_color = 'white'
+                ), 
+                sg.Column(
+                    
+                    [
+                        [ sg.Text(f'Termo pesquisado: '),
+                        sg.Combo(produtos, default_value='Todos', size = (21, None)  )
+                        ],
+                        [ sg.Text(f'Resultados exibidos na plataforma:', size = (28, None) ),
+                        sg.Input(resultados_exibidos, key = 'resultados_exibidos', size = (7,None), justification='r')
+                        ],
+                        [ sg.Text(f'Produtos candidatos:' , size = (28, None) ),
+                        sg.Input(resultados_candidados, key='resultados_candidados', size = (7,None), justification='r')
+                        ]
+                        
+                    ],size=(305, 85), background_color = 'white'),
+                sg.Column(
+                    
+                    [
+                        [ sg.Text(f'Mercado Livre: ')
+                        
+                        ],
+                        [ sg.Text(f'Quantidade de produtos disponível:', size = (28, None) ),
+                        sg.Input('10000000', key = 'quantidade_disponivel', size = (7,None), justification='r')
+                        ],
+                        [ sg.Text(f'Quantidade de produtos vendidos:' , size = (28, None) ),
+                        sg.Input('10000000', key='quantidade_vendidos', size = (7,None), justification='r')
+                        ]
+                        
+                    ],size=(305, 85), background_color = 'white'),
+                ],
+
+        
+                [
+                    sg.Table(
+                        values=data,
+                        
+                        headings=['produto', 'titulo', 'vendedor', 'preço','qtd','descricao','homologado', 'paltaforma','url'],
+                        key='-TABLE-',
+                        enable_events=True,
+                        auto_size_columns=False,
+                        num_rows=24,
+                        justification='left',
+                        col_widths=[10, 30, 12, 7, 5, 15, 10,9,10]
+                        # display_row_numbers = True,
+                    )
+                ],
+
+        
+                [
+                    sg.Button('<< voltar à tela inicial'),
+                    sg.Button('Editar produto', key='-EDITAR-', disabled=True),
+                    sg.Button('ver página do produto', key='-ACESSAR-', disabled=True)
+                ]
             ]
-]
 
-    # Cria a janela
-    window = sg.Window("Regulatron Beta", layout, size=(1024, 600), element_justification="c")
+    # Criando a janela
+    window = sg.Window("Regulatron Beta", layout, size=(1024, 600))
 
-    # Loop para lidar com eventos
+    # Loop para processar eventos
     while True:
         event, values = window.read()
-      
-        if event == sg.WINDOW_CLOSED or event == 'Fechar':
+        if event == sg.WINDOW_CLOSED:
             break
+        if event == '<< voltar à tela inicial':
+           window.close()
+           tela_inicial()
 
-        if event == "Nova Varredura":
-            window.close()
-            escolher_produtos_para_pesquisar()
-            
         if event == '-TABLE-':
             try:
                 row_index = window['-TABLE-'].get()[0]
@@ -490,87 +564,197 @@ def listar_produtos_capturados():
                 while True:
                     edit_event, edit_values = edit_window.read()
 
-
                     if edit_event == sg.WINDOW_CLOSED or edit_event == 'Cancelar':   
                         edit_window.close()
                         break 
 
-                    elif edit_event == 'HOMOLOGADO':
-                        
-                        # todo --- criar uma função  ##############################################################
+                    elif edit_event == 'HOMOLOGADO' or edit_event == 'NÃO HOMOLOGADO' or edit_event == 'NÃO APLICÁVEL':
+                        import pandas as pd # todo --- fazer salvar em csv  #########################################
+
                         selected_row = values['-TABLE-']
                         if selected_row != []:
                             selected_row = values['-TABLE-'][0]
-                            url = data[selected_row][6]
+                            url = data[selected_row][8]
                         
-                            df_temp = pd.read_csv('resultados_mercado_livre.csv', encoding = 'iso-8859-1', sep = ';')
-                            df_temp.loc[df_temp['url'] == url, 'homologado'] = 'HOMOLOGADO'
+                            df_temp = pd.read_csv('dados/resultado_mercado_livre.csv', encoding = 'iso-8859-1', sep = ';')
+                            df_temp.loc[df_temp['url'] == url, 'homologado'] = edit_event
                             
-                            salvar_resultado(df_temp, 'mercado_livre')
-                            data = carrega_CSV()
+                            df_temp.to_csv('dados/resultado_mercado_livre.csv', encoding = 'iso-8859-1', sep = ';', index = False)
+                            # data = carrega_produtos_capturados('dados/resultado_mercado_livre.csv')
+                            data[selected_row][6] = edit_event
                             window['-TABLE-'].update(values=data)
-                        
                         
                         edit_window.close()
                         break 
-                        
-                    elif edit_event == 'NÃO HOMOLOGADO':
-                        # todo --- criar uma função  ##############################################################
-                        selected_row = values['-TABLE-']
-                        if selected_row != []:
-                            selected_row = values['-TABLE-'][0]
-                            url = data[selected_row][6]
-                        
-                            df_temp = pd.read_csv('resultados_mercado_livre.csv', encoding = 'iso-8859-1', sep = ';')
-                            df_temp.loc[df_temp['url'] == url, 'homologado'] = 'NÃO HOMOLOGADO'
-                            
-                            salvar_resultado(df_temp, 'mercado_livre')
-                            data = carrega_CSV()
-                            window['-TABLE-'].update(values=data)
-                            
-                        edit_window.close()
-                        break 
-                        
-                    elif edit_event == 'NÃO APLICÁVEL':
-                        # todo --- criar uma função  ##############################################################
-                        selected_row = values['-TABLE-']
-                        if selected_row != []:
-                            selected_row = values['-TABLE-'][0]
-                            url = data[selected_row][6]
-                        
-                            df_temp = pd.read_csv('resultados_mercado_livre.csv', encoding = 'iso-8859-1', sep = ';')
-                            df_temp.loc[df_temp['url'] == url, 'homologado'] = 'NÃO APLICÁVEL'
-                            
-                            salvar_resultado(df_temp, 'mercado_livre')    
-                            
-                            data = carrega_CSV()
-                            window['-TABLE-'].update(values=data)
-                            
-                        edit_window.close()
-
-
-
-                    break
-                edit_window.close()
-    
-
-    #        except Exception as e:
-    #            print(e)
-
-    #                                
 
         if event == '-ACESSAR-':
             import webbrowser
-            
             selected_row = values['-TABLE-']
             if selected_row != []:
                 selected_row = values['-TABLE-'][0]
-                url = data[selected_row][6]
-                
+                url = data[selected_row][8]
                 webbrowser.open(url)
 
-    # Fecha a janela
+    # Fechando a janela
     window.close()
+    
+# #     # Define o layout da janela
+# #     layout = [
+# #             # primeira linha - imagem do logotipo 
+# #                 [sg.Image( 'img/logo_pequeno.png', size=(352,78) ) ],
+# #                 [ sg.Text( f'Resultados exibidos na plataforma: {dict_resultados}' )],
+# #                 [ sg.Text( 'Resultados capturados:' , font = font_selecao )],
+# #                 [sg.Table(
+# #                     values=data,
+# #                     headings=['produto', 'titulo', 'vendedor', 'preco', 'qtd','homologado', 'url'],
+# #                     key='-TABLE-',
+# #                     enable_events=True,
+# #                     auto_size_columns=False,
+# #                     num_rows=20,
+# #                     justification='left',
+# #                     col_widths=[15, 35, 12, 6, 6, 15,30],  
+# #                 )
+# #             ],
+# #             [  
+# #               sg.Button('Editar produto', key='-EDITAR-', disabled=True),
+# #               sg.Button('ver página do produto', key='-ACESSAR-', disabled=True),
+# #               sg.Button("Treinar Modelo", disabled=True),
+# #               sg.Button("Nova Varredura"),
+# #             ]
+# # ]
+
+#     # Cria a janela
+#     window = sg.Window("Regulatron Beta", layout, size=(1024, 600), element_justification="c")
+
+#     # Loop para lidar com eventos
+#     while True:
+#         event, values = window.read()
+      
+#         if event == sg.WINDOW_CLOSED or event == 'Fechar':
+#             break
+
+#         if event == "Nova Varredura":
+#             window.close()
+#             escolher_produtos_para_pesquisar()
+            
+#         if event == '-TABLE-':
+#             try:
+#                 row_index = window['-TABLE-'].get()[0]
+#                 window['-EDITAR-'].update(disabled=False)
+#                 window['-ACESSAR-'].update(disabled=False)
+#             except:
+#                 pass
+#                 #window['-ERROR-'].update('Selecione um produto para editar ou remover')
+
+#         if event == '-EDITAR-': 
+#     #        try:
+
+#             # Obter a linha selecionada na tabela
+#             selected_row = values['-TABLE-']
+
+#             if selected_row != []:
+
+#                 selected_row = values['-TABLE-'][0]
+
+#                 # código para editar o produto selecionado
+
+#                 # Criar uma janela de edição        
+#                 edit_layout = [
+#                     [ sg.Text('Editando produto:', font=font_selecao) ],
+#                     [ sg.Text(data[selected_row][1], font=font_principal) ],
+#                     [ sg.Text('Termo pesquisado:', font=font_selecao), sg.Text(data[selected_row][0] , font=font_selecao) ],
+#                     [ sg.Text("-"*20) ],
+#                     [ sg.Button('HOMOLOGADO'), sg.Button('NÃO HOMOLOGADO'), sg.Button('NÃO APLICÁVEL') , sg.Button('Cancelar') ],
+#                     [ sg.Text('* Marcar "NÃO APLICÁVEL" se o produto não corresponde ao termo pesquisado') ]
+#                 ]
+
+#                 edit_window = sg.Window('Editar linha', edit_layout, element_justification="c")
+
+#                 # Loop de eventos da janela de edição
+#                 while True:
+#                     edit_event, edit_values = edit_window.read()
+
+
+#                     if edit_event == sg.WINDOW_CLOSED or edit_event == 'Cancelar':   
+#                         edit_window.close()
+#                         break 
+
+#                     elif edit_event == 'HOMOLOGADO':
+                        
+#                         # todo --- criar uma função  ##############################################################
+#                         selected_row = values['-TABLE-']
+#                         if selected_row != []:
+#                             selected_row = values['-TABLE-'][0]
+#                             url = data[selected_row][6]
+                        
+#                             df_temp = pd.read_csv('resultados_mercado_livre.csv', encoding = 'iso-8859-1', sep = ';')
+#                             df_temp.loc[df_temp['url'] == url, 'homologado'] = 'HOMOLOGADO'
+                            
+#                             salvar_resultado(df_temp, 'mercado_livre')
+#                             data = carrega_CSV()
+#                             window['-TABLE-'].update(values=data)
+                        
+                        
+#                         edit_window.close()
+#                         break 
+                        
+#                     elif edit_event == 'NÃO HOMOLOGADO':
+#                         # todo --- criar uma função  ##############################################################
+#                         selected_row = values['-TABLE-']
+#                         if selected_row != []:
+#                             selected_row = values['-TABLE-'][0]
+#                             url = data[selected_row][6]
+                        
+#                             df_temp = pd.read_csv('resultados_mercado_livre.csv', encoding = 'iso-8859-1', sep = ';')
+#                             df_temp.loc[df_temp['url'] == url, 'homologado'] = 'NÃO HOMOLOGADO'
+                            
+#                             salvar_resultado(df_temp, 'mercado_livre')
+#                             data = carrega_CSV()
+#                             window['-TABLE-'].update(values=data)
+                            
+#                         edit_window.close()
+#                         break 
+                        
+#                     elif edit_event == 'NÃO APLICÁVEL':
+#                         # todo --- criar uma função  ##############################################################
+#                         selected_row = values['-TABLE-']
+#                         if selected_row != []:
+#                             selected_row = values['-TABLE-'][0]
+#                             url = data[selected_row][6]
+                        
+#                             df_temp = pd.read_csv('resultados_mercado_livre.csv', encoding = 'iso-8859-1', sep = ';')
+#                             df_temp.loc[df_temp['url'] == url, 'homologado'] = 'NÃO APLICÁVEL'
+                            
+#                             salvar_resultado(df_temp, 'mercado_livre')    
+                            
+#                             data = carrega_CSV()
+#                             window['-TABLE-'].update(values=data)
+                            
+#                         edit_window.close()
+
+
+
+#                     break
+#                 edit_window.close()
+    
+
+#     #        except Exception as e:
+#     #            print(e)
+
+#     #                                
+
+#         if event == '-ACESSAR-':
+#             import webbrowser
+            
+#             selected_row = values['-TABLE-']
+#             if selected_row != []:
+#                 selected_row = values['-TABLE-'][0]
+#                 url = data[selected_row][6]
+                
+#                 webbrowser.open(url)
+
+#     # Fecha a janela
+#     window.close()
     
 
 # fim da tela de listar produtos capturados plataformas ===================================

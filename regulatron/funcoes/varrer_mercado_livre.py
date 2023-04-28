@@ -3,6 +3,7 @@ from modelos.testar_palavras import *
 from util.util import *
 from driver.driver import *
 from time import sleep
+import re
 
 def varrer_mercado_livre(produtos_selecionados):
 
@@ -128,6 +129,7 @@ def capturar_detalhes_produtos(dicionario, driver):
         'homologado': [],
         'plataforma' : [],
         'url' : []
+        # 'quantidade_vendida':[]
         # modelo' : modelo
     }
     
@@ -167,6 +169,8 @@ def capturar_detalhes_produtos(dicionario, driver):
                 descricao      = driver.find_element(By.CLASS_NAME, 'ui-pdp-description__content').text[0:500]
             except:
                 descricao      = ''
+
+            # <span class="ui-pdp-buybox__quantity__available">(8 disponíveis)</span>
             try:
                 quantidade     = driver.find_element(By.CLASS_NAME, 'ui-pdp-buybox__quantity__available').text
                 padrao = r'\((\d+)\s+\w+\)'
@@ -177,9 +181,25 @@ def capturar_detalhes_produtos(dicionario, driver):
 
                 else:
                     quantidade = 1 
-            except:
-                quantidade     = -1 
-            
+            except Exception as e:
+                # print(e)
+                quantidade     = 1
+
+            # # <strong class="ui-pdp-seller__sales-description">+100</strong>
+            # try:
+            #     quantidade_vendida     = driver.find_element(By.CLASS_NAME, 'ui-pdp-seller__sales-description').text
+            #     padrao = r'\((\d+)\s+\w+\)'
+            #     match = re.search(padrao, quantidade_vendida)
+
+            #     if match:
+            #         quantidade_vendida = int(match.group(1))
+
+            #     else:
+            #         quantidade_vendida = 1 
+            # except Exception as e:
+            #     print(e)
+            #     quantidade_vendida     = -1 
+
             if testar_palavras(titulo_produto + ' ' + descricao, yes_words, no_words):
                 homologado = 'CANDIDATO'
             else:
