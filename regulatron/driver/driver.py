@@ -52,5 +52,8 @@ def wait_for_element(driver: webdriver, element_id: str, timeout: int = 2) -> No
     """
     Aguarda até que um elemento com o ID especificado seja carregado na página.
     """
-    wait = WebDriverWait(driver, timeout)
-    wait.until(EC.presence_of_element_located((By.ID, element_id)))
+    try:
+        wait = WebDriverWait(driver, timeout)
+        wait.until(EC.presence_of_element_located((By.ID, element_id)))
+    except:
+        pass

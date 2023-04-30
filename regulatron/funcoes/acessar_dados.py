@@ -19,7 +19,7 @@ def carregar_json(arquivo):
     """
     
     if os.path.exists(arquivo):
-        with open(arquivo, 'r', encoding='iso-8859-1') as arq:
+        with open(arquivo, 'r', encoding='utf-8') as arq:
             dados = json.load(arq)
     else:
         dados = {}
@@ -52,8 +52,25 @@ def carregar_json(arquivo):
 #     return dados
 
 def salvar_json(arquivo, dados):
-    with open(arquivo, 'w', encoding='iso-8859-1') as file:
+    with open(arquivo, 'w', encoding='utf-8') as file:
         json.dump(dados, file)
+
+
+
+# def salvar_dict_para_csv(dicionario, arquivo_csv):
+#     import pandas as pd
+
+#     df = pd.read_csv(arquivo_csv, sep=';', encoding='iso-8859-1')
+#     df = df.loc[~df['url'].isin(dicionario['url'])]
+#     df_novo = pd.DataFrame(dicionario)
+
+#     # Converter caracteres para 'iso-8859-1' antes de salvar o CSV
+#     for coluna in df_novo.columns:
+#         if df_novo[coluna].dtype == object:
+#             df_novo[coluna] = df_novo[coluna].apply(lambda x: x.encode('iso-8859-1').decode('iso-8859-1'))
+
+#     df = pd.concat([df_novo, df], ignore_index=True)
+#     df.to_csv(arquivo_csv, sep=';', encoding='iso-8859-1', index=False)
 
 
 
@@ -61,11 +78,18 @@ def salvar_json(arquivo, dados):
 def salvar_dict_para_csv(dicionario, arquivo_csv): 
     import pandas as pd
 
-    df = pd.read_csv(arquivo_csv, sep=';', encoding='iso-8859-1')
+    df = pd.read_csv(arquivo_csv, sep=';', encoding='utf-8')
     df = df.loc[ ~ df['url'].isin(dicionario['url']) ]
     df_novo = pd.DataFrame(dicionario)
     df = pd.concat([df_novo, df], ignore_index = True)
-    df.to_csv(arquivo_csv, sep=';', encoding='iso-8859-1', index = False)
+    
+    try:
+        df.to_csv(arquivo_csv, sep=';', encoding='utf-8', index = False)
+    except Exception as e:
+        print(e)
+
+    
+
 
 # # Exemplo de uso:
 # dicionario = {
@@ -113,33 +137,11 @@ def salvar_dict_para_csv(dicionario, arquivo_csv):
     #         writer.writerow(dict(zip(colunas, coluna_convertida)))
     
 def carrega_produtos_capturados(arquivo):
-    with open(arquivo, 'r', encoding='iso-8859-1') as file:
+    with open(arquivo, 'r', encoding='utf-8') as file:
         reader = csv.reader(file, delimiter = ';')
         data = list(reader)
         data = data[1:]
     
     return data
 
-# def salvar_dict_para_csv(dicionario, arquivo):
-#     print(dicionario)
-#     # Lista das chaves do dicionário
-#     colunas = [ chave for chave in dicionario.keys() ]
-#     # 'produto_pesquisado', 'titulo_produto', 'id_vendedor', 'preco', 'quantidade', 'descricao', 'homologado', 'url']
-    
-#     # Abre o arquivo CSV em modo de escrita
-#     with open(arquivo, 'w', newline='', encoding='iso-8859-1') as arquivo_csv:
-#         writer = csv.DictWriter(arquivo_csv, fieldnames=colunas, delimiter=';')
-        
-#         # Escreve os cabeçalhos das colunas
-#         writer.writeheader()       
-        
-#         # Cria uma lista de listas com os valores do dicionário
-#         valores = list(dicionario.values())
-#         colunas = zip(*valores)
-
-#         for coluna in colunas:
-#             writer.writerow(list(coluna))
-
-    
-    # print(f'O arquivo CSV "{arquivo}" foi salvo com sucesso!')
 

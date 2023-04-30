@@ -4,6 +4,7 @@ from util.util import *
 from driver.driver import *
 from time import sleep
 import urllib
+from bs4 import BeautifulSoup
 
 
 def varrer_carrefour(produtos_selecionados):
@@ -107,61 +108,92 @@ def capturar_detalhes_produtos_carrefour(dicionario, driver):
         no_words  = produtos_para_pesquisa[chave]["no-words"]
 
         for item in dicionario[chave]:
-            
-            # navega até a página do produto
-            driver.get(item)
-            sleep(tempo_de_espera)
-
-            #titulo
-            #<span class="vtex-store-components-3-x-productBrand ">Suporte De Parede Para Btv 10/11 </span>
-            #vendedor
-            # <a href="/parceiro/olist" class="carrefourbr-carrefour-components-0-x-sellerLink">Olist</a>
-            # preco
-            # <span class="carrefourbr-carrefour-components-0-x-currencyContainer">
-            # <span class="carrefourbr-carrefour-components-0-x-currencyCode">R$</span><span class="carrefourbr-carrefour-components-0-x-currencyLiteral">&nbsp;</span><span class="carrefourbr-carrefour-components-0-x-currencyInteger">39</span><span class="carrefourbr-carrefour-components-0-x-currencyDecimal">,</span><span class="carrefourbr-carrefour-components-0-x-currencyFraction">85</span></span>
-            # descricao
-            # <div class="vtex-store-components-3-x-productDescriptionContainer"><h2 class="vtex-store-components-3-x-productDescriptionTitle t-heading-5 mb5 mt0">Descrição do produto</h2><div class="vtex-store-components-3-x-productDescriptionText c-muted-1"><div style="display: contents;">Leia Toda A Descrição
-
             try:
-                titulo_produto = driver.find_element(By.CLASS_NAME, 'vtex-store-components-3-x-productBrand').text
-            except:
-                titulo_produto = ''
+                # navega até a página do produto
+                driver.get(item)
+                sleep(tempo_de_espera)
 
-            try:
-                id_vendedor    = driver.find_element(By.XPATH, 'carrefourbr-carrefour-components-0-x-sellerLink').text
-            except:
-                id_vendedor    = ''
+                try:
+                    titulo_produto = driver.find_element(
+                                                        By.CLASS_NAME,
+                                                        'vtex-store-components-3-x-productBrand'
+                                                        ).get_attribute('innerHTML')
+                    
+                except Exception as e:
+                    print(e)
+                    titulo_produto = ''
 
-            try:        
-                preco = driver.find_element(By.CLASS_NAME, 'carrefourbr-carrefour-components-0-x-currencyContainer').text
-            except:
-                preco = ''
                 
-            try:
-                        #<div class="vtex-store-components-3-x-productDescriptionText c-muted-1"><div style="display: contents;">Fonte Bivolt 5v 2a Receptor Btv-b8 Btv-b9 Btv-b10 Btv-b11fonte Bivolt 5v 2a Receptor Btv-b8 Btv-b9 Btv-b10 Btv-b11 ==fonte De Energia Para Receptor Btv (substitui A Original) Com As Mesmas Características, Fonte Bivolt De Excelente Custo Beneficio.==funciona Nos Modelos:btv B8btv B9btv Bxbtv 10btv B11btv E9 Expressbtv E10 Express==tv Box 4k==tv Box Inova==tv Box Fullhdbtv B8btv B9btv Bxbtv 10btv E9 Express==características:voltagem:: Bivolt 110-220 Voutput: 5v/ 2a==potencia 10w Real==plug Conector P4==itens Inclusos01 - Fonte De Energia==produto Novo==imagem Ilustrativa==garantia 90 Dias==fabricantejs Technology==</div></div>
-                        #<div style="display: contents;">Fonte Bivolt 5v 2a Receptor Btv-b8 Btv-b9 Btv-b10 Btv-b11fonte Bivolt 5v 2a Receptor Btv-b8 Btv-b9 Btv-b10 Btv-b11 ==fonte De Energia Para Receptor Btv (substitui A Original) Com As Mesmas Características, Fonte Bivolt De Excelente Custo Beneficio.==funciona Nos Modelos:btv B8btv B9btv Bxbtv 10btv B11btv E9 Expressbtv E10 Express==tv Box 4k==tv Box Inova==tv Box Fullhdbtv B8btv B9btv Bxbtv 10btv E9 Express==características:voltagem:: Bivolt 110-220 Voutput: 5v/ 2a==potencia 10w Real==plug Conector P4==itens Inclusos01 - Fonte De Energia==produto Novo==imagem Ilustrativa==garantia 90 Dias==fabricantejs Technology==</div>
+                # <span class="carrefourbr-carrefour-components-0-x-carrefourSeller b f5">Carrefour</span>
+                try:
+                    try:
+                        id_vendedor    = driver.find_element(
+                                                            By.CLASS_NAME,
+                                                            'carrefourbr-carrefour-components-0-x-carrefourSeller'
+                                                            ).get_attribute('innerHTML')
+                        
+                    except:
+                        id_vendedor    = driver.find_element(
+                                                            By.CLASS_NAME,
+                                                            'carrefourbr-carrefour-components-0-x-sellerLink'
+                                                            ).get_attribute('href')
+                        
+                        id_vendedor = id_vendedor.split('/')[-1]
+                except Exception as e:
+                    print(e)
+                    id_vendedor    = '##FALHOU##'
 
-                descricao      = driver.find_element(By.CLASS_NAME, 'vtex-store-components-3-x-productDescriptionText').text[0:500]
+                try:        
+                    inteiro = driver.find_element(
+                                                By.CLASS_NAME,
+                                                'carrefourbr-carrefour-components-0-x-currencyInteger'
+                                                ).get_attribute('innerHTML')
+                    
+                    fracao  = driver.find_element(
+                                                By.CLASS_NAME,
+                                                'carrefourbr-carrefour-components-0-x-currencyFraction'
+                                                ).get_attribute('innerHTML')
+                    
+                    preco   =  float(inteiro + '.' + fracao)
+                    preco = '{:0.2f}'.format(preco).replace('.', ',')
+                except Exception as e:
+                    preco = ''
+                    
+                try:
+                    driver.execute_script("window.scrollTo(0, 500);")
+                    sleep(2)
+                    descricao = driver.find_element(By.CLASS_NAME, 'vtex-store-components-3-x-productDescriptionText').get_attribute('innerHTML')[0:500]
+
+                    # Criar um objeto BeautifulSoup a partir do HTML
+                    soup = BeautifulSoup(descricao, 'html.parser')
+
+                    # Remover todas as tags HTML e converte para latin-1
+                    descricao = soup.get_text().strip()
+
+                except Exception as e:
+                    print(e)
+                    descricao = ''
+
+                quantidade = 1
+
+                if testar_palavras(f'{titulo_produto} {descricao}', yes_words, no_words):
+                    homologado = 'CANDIDATO'
+                else:
+                    homologado = ''
+                
+                dict_produtos['produto_pesquisado'].append(chave)
+                dict_produtos['titulo_produto'].append(titulo_produto)
+                # dict_produtos['marca'].append(marca)
+                dict_produtos['id_vendedor'].append(id_vendedor)
+                dict_produtos['preco'].append(preco)
+                dict_produtos['quantidade'].append(quantidade)
+                dict_produtos['descricao'].append(descricao)
+                dict_produtos['homologado'].append(homologado)
+                dict_produtos['plataforma'].append('Carrefour')
+                dict_produtos['url'].append(item)
+                # dict_produtos['modelo'].append(modelo)
+
             except:
-                descricao      = ''
-
-            quantidade     = 1
-
-            if testar_palavras(titulo_produto + ' ' + descricao, yes_words, no_words):
-                homologado = 'CANDIDATO'
-            else:
-                homologado = ''
-            
-            dict_produtos['produto_pesquisado'].append(chave)
-            dict_produtos['titulo_produto'].append(titulo_produto)
-            # dict_produtos['marca'].append(marca)
-            dict_produtos['id_vendedor'].append(id_vendedor)
-            dict_produtos['preco'].append(preco)
-            dict_produtos['quantidade'].append(quantidade)
-            dict_produtos['descricao'].append(descricao)
-            dict_produtos['homologado'].append(homologado)
-            dict_produtos['plataforma'].append('Carrefour')
-            dict_produtos['url'].append(item)
-            # dict_produtos['modelo'].append(modelo)
+                pass
 
     salvar_dict_para_csv(dict_produtos, 'dados/resultado_mercado_livre.csv')

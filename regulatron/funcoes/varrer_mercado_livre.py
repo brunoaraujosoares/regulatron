@@ -133,7 +133,7 @@ def capturar_detalhes_produtos(dicionario, driver):
         # modelo' : modelo
     }
     
-    for chave,valor in dicionario.items():
+    for chave in dicionario.keys():
 
         yes_words = produtos_para_pesquisa[chave]["yes-words"]
         no_words  = produtos_para_pesquisa[chave]["no-words"]
@@ -151,14 +151,16 @@ def capturar_detalhes_produtos(dicionario, driver):
 
             try:
                 id_vendedor    = driver.find_element(By.XPATH, '//*[@id="seller_info"]/div/a').get_attribute('href')
-                id_vendedor      = id_vendedor.split('/')[-1]
+                id_vendedor    = id_vendedor.split('/')[-1]
+                
             except:
                 id_vendedor    = ''
 
             try:        
                 preco = driver.find_element(By.CLASS_NAME, 'andes-money-amount__fraction').text
                 try:
-                    preco = preco + ',' + driver.find_element(By.CLASS_NAME, 'andes-money-amount__cents').text
+                    preco = float(preco + '.' + driver.find_element(By.CLASS_NAME, 'andes-money-amount__cents').text)
+                    preco = '{:0.2f}'.format(preco).replace('.', ',')                    
                 except:
                     pass
 
@@ -206,7 +208,7 @@ def capturar_detalhes_produtos(dicionario, driver):
                 homologado = ''
             
             dict_produtos['produto_pesquisado'].append(chave)
-            dict_produtos['titulo_produto'].append(titulo_produto)
+            dict_produtos['titulo_produto'].append(titulo_produto) 
             # dict_produtos['marca'].append(marca)
             dict_produtos['id_vendedor'].append(id_vendedor)
             dict_produtos['preco'].append(preco)
@@ -217,6 +219,5 @@ def capturar_detalhes_produtos(dicionario, driver):
             dict_produtos['url'].append(item)
             # dict_produtos['modelo'].append(modelo)
 
-    # print(dict_produtos)
     
     salvar_dict_para_csv(dict_produtos, 'dados/resultado_mercado_livre.csv')
