@@ -1,2 +1,2 @@
-def varrer_shopee():
+def varrer_shopee(produtos_selecionados):
     return

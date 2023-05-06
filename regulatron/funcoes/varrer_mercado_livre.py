@@ -9,6 +9,9 @@ def varrer_mercado_livre(produtos_selecionados):
 
     # carregar os produtos a serem pesquisados
     produtos_para_pesquisa = carregar_json('dados/produtos.json')
+    qtde_produtos = carregar_json('dados/relatorio_produtos.json')
+    # print(qtde_produtos)
+    
 
     # carregar configurações de tempo de espera e limite de produtos
     dados_configuracoes = carregar_json('dados/config.json')
@@ -29,19 +32,25 @@ def varrer_mercado_livre(produtos_selecionados):
     for chave_ext, valor_ext in produtos_para_pesquisa.items():
         # print(f"Produto pesquisado: {chave_ext}")
 
+
         yes_words = produtos_para_pesquisa[chave_ext]["yes-words"]
         no_words  = produtos_para_pesquisa[chave_ext]["no-words"]
         set_produtos = set() # vai guardar os links dos produtos
 
         navigate_to_page(driver, url)
-
-        #wait_for_element(driver, element_id)
         sleep(tempo_de_espera)
+
 
         if element_exists(driver, element_id):
             query = chave_ext
             search(driver, query, element_id)
             sleep(tempo_de_espera) # espera a lista de produtos carregar
+
+            qtde_produto_pesquisado =  driver.find_element(
+                    By.XPATH,'//*[@id="root-app"]/div/div[2]/aside/div[2]/span'
+                ).get_attribute('innerHTML').split(' ')[0]
+            qtde_produtos[chave_ext] = {'Mercado Livre' : qtde_produto_pesquisado }
+            
             
             try: 
                 ultima_pagina = driver.find_element(By.CLASS_NAME,'andes-pagination__page-count').get_attribute('innerHTML')
@@ -81,6 +90,9 @@ def varrer_mercado_livre(produtos_selecionados):
                     pass
 
             dict_produtos[chave_ext] = list(set_produtos)
+
+    # salvar o resultado dos produtos
+    salvar_json('dados/relatorio_produtos.json', qtde_produtos)
 
     capturar_detalhes_produtos(dict_produtos, driver)
     driver.quit()
@@ -221,3 +233,33 @@ def capturar_detalhes_produtos(dicionario, driver):
 
     
     salvar_dict_para_csv(dict_produtos, 'dados/resultado_mercado_livre.csv')
+
+
+def relatorio_meracdo_livre(produtos):
+    # carregar configurações de tempo de espera e limite de produtos
+    dados_configuracoes = carregar_json('dados/config.json')
+    tempo_de_espera     = dados_configuracoes.get('tempo_de_espera')
+
+    # #driver = get_driver() # abre o navegador
+
+    # for chave in produtos.keys():
+    #     # pega ML
+    #     navigate_to_page(driver, 'https://www.mercadolivre.com.br')
+    #     sleep(tempo_de_espera)
+    #     search(driver, query, element_id)
+    #     sleep(tempo_de_espera)
+    #     # pega a quantidade de produtos
+
+
+    #     # pega carrfour
+
+
+    #     # pega amazon
+
+
+    #     # pega shopee
+
+
+    # driver.close()
+    return
+

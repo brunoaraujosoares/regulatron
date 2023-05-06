@@ -5,7 +5,6 @@ from funcoes.varrer_carrefour import *
 from funcoes.varrer_amazon import *
 from funcoes.varrer_shopee import *
 
-
 def tela_inicial(): 
 
     """
@@ -59,7 +58,7 @@ def tela_inicial():
                             chave,
                             key=chave,
                             default = False,
-                            size=(15,1))
+                            size=(30,1))
                        ])
     coluna = sg.Column(conteudo_da_coluna, element_justification="l", size = (1000,400), background_color='lightgray')
     
@@ -90,7 +89,8 @@ def tela_inicial():
             sg.Button('Adicionar Produto'),
             sg.Button('Editar'),
             sg.Button('Excluir'),
-            sg.Text(' '*120),
+            sg.Button('Relatório de pesquisas'),
+            sg.Text(' '*80),
             sg.Button('Exibir Produtos Capturados'),
             sg.Button('Avançar >>')
         ]
@@ -228,9 +228,64 @@ def tela_inicial():
         if event == 'Adicionar Produto':
             adicionar_produto(window)
 
+        if event == 'Relatório de pesquisas':
+            relatorio_de_pesquisa()
+
     window.close()
     
     # fim da tela inicial
+
+
+def  relatorio_de_pesquisa():
+    import os
+    import datetime
+
+    # Obtém o tempo de criação do arquivo em formato de timestamp
+    timestamp = os.path.getmtime('dados/relatorio_produtos.json')
+
+    # Converte o timestamp para o formato de data e hora
+    data_hora_criacao = datetime.datetime.fromtimestamp(timestamp)
+    data_hora_criacao = data_hora_criacao.strftime("%d/%m/%Y %H:%M")
+    
+    dados_produtos = carregar_json('dados/relatorio_produtos.json')
+
+    cabecalho = ['Produto', 'Mercado Livre', 'Carrefour', 'Amazon', 'Shopee']
+    tabela = [cabecalho]  # Inicia a tabela com o cabeçalho
+
+    # Dados de exemplo para preencher a tabela
+    for produto, valores in dados_produtos.items():
+        linha = [produto]  # Adiciona o nome do produto na primeira coluna
+        for mercado in cabecalho[1:]:
+            linha.append(valores[mercado])  # Adiciona as quantidades para cada mercado
+        tabela.append(linha)  # Adiciona a linha à tabela
+
+
+    # Definição do layout
+    layout = [
+        [sg.Table(values=tabela[1:],
+                headings=['Produto', 'Qtde ML', 'Qtde Carrefour', 'Qtde Amazon', 'Qtde Shopee'],
+                justification='center',
+                auto_size_columns=True,
+                num_rows=10,
+                key='-TABLE-')],
+        [ sg.Text( f'Resultados atualizados em: {data_hora_criacao}') ]
+    ]
+
+    # Criação da janela
+    janela = sg.Window('Exemplo de Tabela', layout)
+
+    # Loop de eventos
+    while True:
+        evento, valores = janela.read()
+        if evento == sg.WINDOW_CLOSED:
+            break
+
+    # Fechamento da janela
+    janela.close()
+    
+    return 
+
+
    
 
 def editar_produto(janela, produto):
