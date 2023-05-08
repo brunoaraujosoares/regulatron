@@ -11,6 +11,8 @@ def varrer_carrefour(produtos_selecionados):
 
     # carregar os produtos a serem pesquisados
     produtos_para_pesquisa = carregar_json('dados/produtos.json')
+    qtde_produtos = carregar_json('dados/relatorio_produtos.json')
+    print(qtde_produtos)
 
     # carregar configurações de tempo de espera e limite de produtos
     dados_configuracoes = carregar_json('dados/config.json')
@@ -33,6 +35,19 @@ def varrer_carrefour(produtos_selecionados):
         
         navigate_to_page(driver, f'https://www.carrefour.com.br/busca/{query}')
         sleep(tempo_de_espera)
+
+
+        qtde_produto_pesquisado =  driver.find_element(
+                By.CLASS_NAME,'vtex-search-result-3-x-totalProducts--layout'
+            ).get_attribute('innerText').split(' ')[0]
+    
+
+        if chave_ext in qtde_produtos: # se o produto já existe no dict
+            qtde_produtos[chave_ext]['Carrefour'] =  qtde_produto_pesquisado
+
+        else:
+            qtde_produtos[chave_ext] = {'Carrefour' : qtde_produto_pesquisado }
+
     
     ### descobrir a última página
 
@@ -73,6 +88,9 @@ def varrer_carrefour(produtos_selecionados):
                 pass
 
         dict_produtos[chave_ext] = list(set_produtos)
+
+    # salvar o resultado dos produtos
+    salvar_json('dados/relatorio_produtos.json', qtde_produtos)
 
     capturar_detalhes_produtos_carrefour(dict_produtos, driver)
     driver.quit()

@@ -252,11 +252,14 @@ def  relatorio_de_pesquisa():
     cabecalho = ['Produto', 'Mercado Livre', 'Carrefour', 'Amazon', 'Shopee']
     tabela = [cabecalho]  # Inicia a tabela com o cabeçalho
 
-    # Dados de exemplo para preencher a tabela
-    for produto, valores in dados_produtos.items():
+    # preenche a tabela
+    for produto, dict_qtde in dados_produtos.items():
         linha = [produto]  # Adiciona o nome do produto na primeira coluna
-        for mercado in cabecalho[1:]:
-            linha.append(valores[mercado])  # Adiciona as quantidades para cada mercado
+        for plataforma in cabecalho[1:]:
+            try:
+                linha.append(dict_qtde[plataforma])  # Adiciona as quantidades para cada plataforma
+            except:
+                linha.append('-')
         tabela.append(linha)  # Adiciona a linha à tabela
 
 
@@ -272,7 +275,7 @@ def  relatorio_de_pesquisa():
     ]
 
     # Criação da janela
-    janela = sg.Window('Exemplo de Tabela', layout)
+    janela = sg.Window('Relatório de produtos pesquisados', layout)
 
     # Loop de eventos
     while True:

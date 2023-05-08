@@ -11,7 +11,6 @@ def varrer_mercado_livre(produtos_selecionados):
     produtos_para_pesquisa = carregar_json('dados/produtos.json')
     qtde_produtos = carregar_json('dados/relatorio_produtos.json')
     # print(qtde_produtos)
-    
 
     # carregar configurações de tempo de espera e limite de produtos
     dados_configuracoes = carregar_json('dados/config.json')
@@ -49,8 +48,11 @@ def varrer_mercado_livre(produtos_selecionados):
             qtde_produto_pesquisado =  driver.find_element(
                     By.XPATH,'//*[@id="root-app"]/div/div[2]/aside/div[2]/span'
                 ).get_attribute('innerHTML').split(' ')[0]
-            qtde_produtos[chave_ext] = {'Mercado Livre' : qtde_produto_pesquisado }
-            
+
+            if chave_ext in qtde_produtos: # se o produto já existe no dict
+                    qtde_produtos[chave_ext]['Mercado Livre'] =  qtde_produto_pesquisado
+            else:
+                qtde_produtos[chave_ext] = {'Mercado Livre' : qtde_produto_pesquisado }
             
             try: 
                 ultima_pagina = driver.find_element(By.CLASS_NAME,'andes-pagination__page-count').get_attribute('innerHTML')
