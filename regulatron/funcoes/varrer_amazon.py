@@ -7,11 +7,13 @@ from time import sleep
 def varrer_amazon(produtos_selecionados):
     # carregar os produtos a serem pesquisados
     produtos_para_pesquisa = carregar_json('dados/produtos.json')
+    qtde_produtos = carregar_json('dados/relatorio_produtos.json')
 
     # carregar configurações de tempo de espera e limite de produtos
     dados_configuracoes = carregar_json('dados/config.json')
     tempo_de_espera     = dados_configuracoes.get('tempo_de_espera')
     limite_de_produtos  = dados_configuracoes.get('limite_de_produtos')
+
     
     produtos_para_pesquisa = filter_dict_by_set_keys(produtos_para_pesquisa, produtos_selecionados)
     
@@ -19,22 +21,36 @@ def varrer_amazon(produtos_selecionados):
     set_produtos = set() # vai guardar os links dos produtos
     driver = get_driver()
     
+
+
     for chave_ext, valor_ext in produtos_para_pesquisa.items():
         
         yes_words = produtos_para_pesquisa[chave_ext]["yes-words"]
         no_words  = produtos_para_pesquisa[chave_ext]["no-words"]
         set_produtos = set() # vai guardar os links dos produtos
 
-
-        links = set()
         driver.get('https://www.amazon.com.br')
         sleep(3)
 
-        search(driver = driver, query = query, element_id = element_id)
+        search(driver = driver, query = chave_ext, element_id = 'twotabsearchtextbox')
         sleep(3)
+        try:
+            qtde_produto_pesquisado =  driver.find_element(
+            By.CLASS_NAME,'a-spacing-top-small'
+                ).get_attribute('innerText')
+
+            posicao_aspa = qtde_produto_pesquisado.find('"')
+            qtde_produto_pesquisado = qtde_produto_pesquisado[0:posicao_aspa-17].split(' ')[-1]
+        except: 
+            qtde_produto_pesquisado = 0
+
+        if chave_ext in qtde_produtos: # se o produto já existe no dict
+                qtde_produtos[chave_ext]['Amazon'] =  qtde_produto_pesquisado
+        else:
+            qtde_produtos[chave_ext] = {'Amazon' : qtde_produto_pesquisado }
+
 
         ## descobre a úlitim página 
-        # <span class="s-pagination-item s-pagination-disabled" aria-disabled="true">7</span>
         try:
             ultima_pagina = driver.find_elements(By.CLASS_NAME, 's-pagination-disabled')[1].get_attribute('innerHTML')
             ultima_pagina = int(ultima_pagina)
@@ -43,6 +59,9 @@ def varrer_amazon(produtos_selecionados):
             
 
         for pagina in range(ultima_pagina):
+            if ( len(set_produtos) == limite_de_produtos ) and ( limite_de_produtos > 0 ) :
+                break
+
             try:
                 # print('pesquisando página ', pagina + 1, 'de', ultima_pagina)
                 #descobrir os links dos produtos
@@ -50,19 +69,13 @@ def varrer_amazon(produtos_selecionados):
                 a_elements = driver.find_elements(By.CLASS_NAME, 'a-link-normal')
                 # a_elements = a_elements.find_elements(By.TAG_NAME, 'a')
                 for element in a_elements:
-                    link_produto = element.get_attribute('href') 
-        #             16,https://www.amazon.com.br/gp/goldbox/
-        #             ,https://www.amazon.com.br/s?k=
-                    if '/gp/' in link_produto:
-                        pass
-                    elif '/s?' in link_produto:
-                        pass 
-                    elif '/s/' in link_produto:
-                        pass
-                    elif '/b?' in link_produto:
-                        pass
-                    else:
-                        links.add(link_produto)
+                    if ( len(set_produtos) == limite_de_produtos ) and ( limite_de_produtos > 0 ) :
+                        break
+
+                    link_produto = element.get_attribute('href').split('&qid=')[0]
+
+                    if ('/gp/' in link_produto or '/dp/' in link_produto ) and ('bestsellers' not in link_produto or 'goldbox' not in link_produto):
+                        set_produtos.add(link_produto)
 
                 if pagina < ultima_pagina:
                     driver.find_elements(By.CLASS_NAME, 's-pagination-next')[0].click()
@@ -73,12 +86,14 @@ def varrer_amazon(produtos_selecionados):
 
         dict_produtos[chave_ext] = list(set_produtos)
 
+    # salvar o resultado dos produtos
+    salvar_json('dados/relatorio_produtos.json', qtde_produtos)
+
     capturar_detalhes_produtos_amazon(dict_produtos, driver)
     driver.quit()
 
 
-
-def capturar_detalhes_produtos_amazon(dict_produtos, driver): 
+def capturar_detalhes_produtos_amazon(dicionario, driver): 
     # carregar os produtos a serem pesquisados
     produtos_para_pesquisa = carregar_json('dados/produtos.json')
 
@@ -121,29 +136,58 @@ def capturar_detalhes_produtos_amazon(dict_produtos, driver):
                     id_vendedor    = driver.find_element(By.XPATH, '//*[@id="tabular-buybox"]/div[1]/div[6]/div').get_attribute('innerText')
 
                 except:
-                    id_vendedor    = ''
+                    try:
+                         id_vendedor = driver.find_element(By.XPATH, '/html/body/div[2]/div[2]/div[3]/div[1]/div[8]/div[1]/div/div/div/div[1]/div/div/div/div/div/div[3]/div/div[1]/form[1]/div/table/tbody/tr[2]/td[2]/span').get_attribute('innerText')
+
+                    except:
+                        id_vendedor    = ''
 
                 try:      
 
-                    string = driver.find_element(By.CLASS_NAME, 'a-price-whole').get_attribute('innerText')
-                    parte_numerica = re.findall(r'\d+', string)
-                    parte_inteira = int(parte_numerica[0])
+                    inteiro = driver.find_element(By.CSS_SELECTOR,
+                                                '#corePriceDisplay_desktop_feature_div > div.a-section.a-spacing-none.aok-align-center > span.a-price.aok-align-center.reinventPricePriceToPayMargin.priceToPay > span:nth-child(2) > span.a-price-whole'
+                                                ).get_attribute('innerText').replace('\n', '')
+                    fracao = driver.find_element(By.CSS_SELECTOR,
+                                                '#corePriceDisplay_desktop_feature_div > div.a-section.a-spacing-none.aok-align-center > span.a-price.aok-align-center.reinventPricePriceToPayMargin.priceToPay > span:nth-child(2) > span.a-price-fraction'
+                                                ).get_attribute('innerText')
+                    print('corePriceDisplay_desktop_feature_div')
+
+                    preco = f'{inteiro}{fracao}'
+
+                except Exception as e:
                     
-                    string = driver.find_element(By.CLASS_NAME, 'a-price-fraction').get_attribute('innerText')
-                    parte_numerica = re.findall(r'\d+', string)
-                    parte_decimal = int(parte_numerica[0])
+                    try: 
+                      
+                        inteiro = driver.find_element(By.CSS_SELECTOR,
+                                                '#corePrice_feature_div > div > span.a-price.aok-align-center > span:nth-child(2) > span.a-price-whole'
+                                                 ).get_attribute('innerText')
+                        fracao =  driver.find_element(By.CSS_SELECTOR, 
+                                                      '#corePrice_feature_div > div > span.a-price.aok-align-center > span:nth-child(2) > span.a-price-fraction'
+                                                   ).get_attribute('innerText')
+                      
+                        print('corePrice_feature_div')
+                        preco = f'{inteiro},{fracao}'
+                      
+                    except Exception as e:
+                        print(e)
 
-                    preco = float(f'{parte_inteira}.{parte_decimal}')
-                    preco = '{:0.2f}'.format(preco).replace('.', ',') 
+                        try:
+                            preco = driver.find_element(By.ID, 'kindle-price-column').get_attribute('innerText')[2:]
+                        except:
+                            preco = ''
 
-                except:
-                    preco = ''
 
                 try:
                     descricao = driver.find_element(By.ID, 'productDescription').text
                 except:
-                    descricao = ''
-                    
+                    try:
+                        descricao = driver.find_element(By.ID, 'bookDescription_feature_div').text
+                    except:
+                        try:
+                            descricao = driver.find_element(By.ID, 'prodDetails').text
+                        except:
+                            descricao = ''
+                  
                 quantidade = 1
 
                 if testar_palavras(f'{titulo_produto} {descricao}', yes_words, no_words):
@@ -165,5 +209,5 @@ def capturar_detalhes_produtos_amazon(dict_produtos, driver):
                 # dict_produtos['modelo'].append(modelo)
             except:
                 pass
-
+         
     salvar_dict_para_csv(dict_produtos, 'dados/resultado_mercado_livre.csv')

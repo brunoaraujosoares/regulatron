@@ -12,7 +12,6 @@ def varrer_carrefour(produtos_selecionados):
     # carregar os produtos a serem pesquisados
     produtos_para_pesquisa = carregar_json('dados/produtos.json')
     qtde_produtos = carregar_json('dados/relatorio_produtos.json')
-    print(qtde_produtos)
 
     # carregar configurações de tempo de espera e limite de produtos
     dados_configuracoes = carregar_json('dados/config.json')

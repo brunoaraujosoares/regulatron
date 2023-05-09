@@ -233,35 +233,6 @@ def capturar_detalhes_produtos(dicionario, driver):
             dict_produtos['url'].append(item)
             # dict_produtos['modelo'].append(modelo)
 
-    
     salvar_dict_para_csv(dict_produtos, 'dados/resultado_mercado_livre.csv')
 
-
-def relatorio_meracdo_livre(produtos):
-    # carregar configurações de tempo de espera e limite de produtos
-    dados_configuracoes = carregar_json('dados/config.json')
-    tempo_de_espera     = dados_configuracoes.get('tempo_de_espera')
-
-    # #driver = get_driver() # abre o navegador
-
-    # for chave in produtos.keys():
-    #     # pega ML
-    #     navigate_to_page(driver, 'https://www.mercadolivre.com.br')
-    #     sleep(tempo_de_espera)
-    #     search(driver, query, element_id)
-    #     sleep(tempo_de_espera)
-    #     # pega a quantidade de produtos
-
-
-    #     # pega carrfour
-
-
-    #     # pega amazon
-
-
-    #     # pega shopee
-
-
-    # driver.close()
-    return
 
