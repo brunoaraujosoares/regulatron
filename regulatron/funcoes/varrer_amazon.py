@@ -72,10 +72,20 @@ def varrer_amazon(produtos_selecionados):
                     if ( len(set_produtos) == limite_de_produtos ) and ( limite_de_produtos > 0 ) :
                         break
 
-                    link_produto = element.get_attribute('href').split('&qid=')[0]
+                    link_produto = element.get_attribute('href').split('/ref=')[0]
 
-                    if ('/gp/' in link_produto or '/dp/' in link_produto ) and ('bestsellers' not in link_produto or 'goldbox' not in link_produto):
+                    # termos isentam os links (se tiver esses termos, não captura o link):
+                    # '/x/c/','bestsellers','goldbox'
+                    # termos que inserem os links '/gp/',  '/dp/'
+                    termos_blacklist = ['/x/c/', 'bestsellers', 'goldbox','offer-listing','kindle-dbs']
+                    termos_whitelist = ['/gp/', '/dp/']
+
+                    if all(termo not in link_produto for termo in termos_blacklist) and any(termo in link_produto for termo in termos_whitelist):
                         set_produtos.add(link_produto)
+
+
+                    # if ('/gp/' in link_produto or '/dp/' in link_produto ) and ('bestsellers' not in link_produto or 'goldbox' not in link_produto or '/x/c/' not in link_produto):
+                    #     set_produtos.add(link_produto)
 
                 if pagina < ultima_pagina:
                     driver.find_elements(By.CLASS_NAME, 's-pagination-next')[0].click()
@@ -140,7 +150,11 @@ def capturar_detalhes_produtos_amazon(dicionario, driver):
                          id_vendedor = driver.find_element(By.XPATH, '/html/body/div[2]/div[2]/div[3]/div[1]/div[8]/div[1]/div/div/div/div[1]/div/div/div/div/div/div[3]/div/div[1]/form[1]/div/table/tbody/tr[2]/td[2]/span').get_attribute('innerText')
 
                     except:
-                        id_vendedor    = ''
+                        try:
+                            id_vendedor = driver.find_element(By.CSS_SELECTOR, '#Ebooks-desktop-printSoldBy > td:nth-child(2) > span').get_attribute('innerText')
+                            
+                        except:
+                            id_vendedor    = ''
 
                 try:      
 
@@ -150,7 +164,6 @@ def capturar_detalhes_produtos_amazon(dicionario, driver):
                     fracao = driver.find_element(By.CSS_SELECTOR,
                                                 '#corePriceDisplay_desktop_feature_div > div.a-section.a-spacing-none.aok-align-center > span.a-price.aok-align-center.reinventPricePriceToPayMargin.priceToPay > span:nth-child(2) > span.a-price-fraction'
                                                 ).get_attribute('innerText')
-                    print('corePriceDisplay_desktop_feature_div')
 
                     preco = f'{inteiro}{fracao}'
 
@@ -165,11 +178,9 @@ def capturar_detalhes_produtos_amazon(dicionario, driver):
                                                       '#corePrice_feature_div > div > span.a-price.aok-align-center > span:nth-child(2) > span.a-price-fraction'
                                                    ).get_attribute('innerText')
                       
-                        print('corePrice_feature_div')
                         preco = f'{inteiro},{fracao}'
                       
-                    except Exception as e:
-                        print(e)
+                    except:
 
                         try:
                             preco = driver.find_element(By.ID, 'kindle-price-column').get_attribute('innerText')[2:]
@@ -186,6 +197,7 @@ def capturar_detalhes_produtos_amazon(dicionario, driver):
                         try:
                             descricao = driver.find_element(By.ID, 'prodDetails').text
                         except:
+
                             descricao = ''
                   
                 quantidade = 1
