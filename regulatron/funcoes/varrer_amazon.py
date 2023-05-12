@@ -77,7 +77,7 @@ def varrer_amazon(produtos_selecionados):
                     # termos isentam os links (se tiver esses termos, não captura o link):
                     # '/x/c/','bestsellers','goldbox'
                     # termos que inserem os links '/gp/',  '/dp/'
-                    termos_blacklist = ['/x/c/', 'bestsellers', 'goldbox','offer-listing','kindle-dbs']
+                    termos_blacklist = ['/x/c/', 'bestsellers', 'goldbox','offer-listing','kindle-dbs','/help/','/slredirect/']
                     termos_whitelist = ['/gp/', '/dp/']
 
                     if all(termo not in link_produto for termo in termos_blacklist) and any(termo in link_produto for termo in termos_whitelist):
@@ -197,8 +197,10 @@ def capturar_detalhes_produtos_amazon(dicionario, driver):
                         try:
                             descricao = driver.find_element(By.ID, 'prodDetails').text
                         except:
-
-                            descricao = ''
+                            try:
+                                driver.find_element(By.ID, 'feature-bullets').text
+                            except:
+                                descricao = ''
                   
                 quantidade = 1
 

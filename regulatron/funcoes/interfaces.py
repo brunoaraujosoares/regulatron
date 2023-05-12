@@ -301,14 +301,21 @@ def editar_produto(janela, produto):
     no_words = ",".join(produto_dict["no-words"])
 
     # Criar uma janela de edição        
-    layout_edit = [
-        [sg.Text('Nome do produto:'), sg.InputText(produto, key='nome')],
-        [sg.Text('Black List (separadas por vírgula):'), sg.InputText(yes_words, key='yes-words')],
-        [sg.Text('White List (separadas por vírgula):'), sg.InputText(no_words, key='no-words')],
-        [sg.Button('Salvar', key='-SAVE-'), sg.Button('Cancelar')]
-    ]
+    # layout_edit = [
+    #     [sg.Text('Nome do produto:'), sg.InputText(produto, key='nome')],
+    #     [sg.Text('Black List (separadas por vírgula):'), sg.InputText(yes_words, key='yes-words')],
+    #     [sg.Text('White List (separadas por vírgula):'), sg.InputText(no_words, key='no-words')],
+    #     [sg.Button('Salvar', key='-SAVE-'), sg.Button('Cancelar')]
+    # ]
 
-    window_edit = sg.Window('Editar produto', layout_edit)
+    layout_edit = [
+        [sg.Text('Nome do produto:        '), sg.InputText(produto, key='nome')],
+        [sg.Text('Black List \n(separadas por vírgula):\n \n \n \n'), sg.Multiline(default_text=yes_words, key='yes-words', size=(60,7))],
+        [sg.Text('White List \n(separadas por vírgula): \n \n \n \n'), sg.Multiline(default_text=no_words, key='no-words', size=(60,7))],
+        [sg.Text(' '*110), sg.Button('Salvar', key='-SAVE-'), sg.Button('Cancelar')]
+]
+
+    window_edit = sg.Window('Editar produto', layout_edit,  size=(600, 330))
 
     # Loop de eventos da janela de edição
     while True:
@@ -584,7 +591,17 @@ def listar_produtos_capturados():
                     sg.Table(
                         values=data,
                         
-                        headings=['produto', 'titulo', 'vendedor', 'preço','qtd','descricao','homologado', 'paltaforma','url'],
+                        headings=[
+                                'produto',
+                                'titulo',
+                                'vendedor',
+                                'preço',
+                                'qtd',
+                                'descricao',
+                                'homologado',
+                                'plataforma',
+                                'url'
+                                ],
                         key='-TABLE-',
                         enable_events=True,
                         auto_size_columns=False,
@@ -638,8 +655,8 @@ def listar_produtos_capturados():
 
                 # Criar uma janela de edição        
                 edit_layout = [
-                    [ sg.Text('Editando produto:', font=font_selecao) ],
-                    [ sg.Text(data[selected_row][1], font=font_principal) ],
+                    [ sg.Text('Editando produto:', font=font_principal) ],
+                    [ sg.Text(data[selected_row][1][:30], font=font_selecao) ],
                     [ sg.Text('Termo pesquisado:', font=font_selecao), sg.Text(data[selected_row][0] , font=font_selecao) ],
                     [ sg.Text("-"*20) ],
                     [ sg.Button('HOMOLOGADO'), sg.Button('NÃO HOMOLOGADO'), sg.Button('NÃO APLICÁVEL') , sg.Button('Cancelar') ],

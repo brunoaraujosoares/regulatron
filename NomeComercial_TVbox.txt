@@ -1,0 +1,524 @@
+SC40B
+SC41B
+RI 4450
+IOG761
+GPRS 1000 UN
+Impacta 300 R
+RI0450
+RT14_
+PLATINUM 7 GMLAN
+ST300R
+ST300H
+ST300HD
+RT30X
+PH8
+PH8-P
+PHS8-P
+PXS8
+AHS3-W
+Multi Bus Unit (MBU)
+ST400
+Active 20 GPRS
+Active 20 Ultra
+Active 8 Ultra
+RS2000 STANDARD 3G
+RT16_
+CGM-4G-LTE-GA
+GPRS Light/VIAWEB GPRS Light Universal
+MÓDULO GPRS LIGHT/Módulo GPRS Light Universal
+GPRS Light
+MÓDULO GPRS LIGHT
+Módulo GPRS light Universal
+Módulo VIAWEB GPRS Light - Universal
+C300
+Radar Flex Moto
+Radar Flex
+Celular de Mesa 3G
+Triton K2
+M95F
+Rastrear Evolution
+Radar Trio
+CardioMessenger Smart 3G
+CloudCell 4G
+iPad Pro 10.5" (Cellular + WiFi)
+ENS22-E
+VL 6 ou VL 06
+CelloTrack Power 3Y
+Raptor 2
+RDT401B-SA-COR2
+V240m
+CP1242-7 GPRS V2
+TDLX-G3500-01 LA / Telemetry Data Logger
+TDLX-G3500-01 LA
+Telemetry Data Logger
+TTA20ANEBS
+TTA20ANENS
+TTA20GNEBS
+TTA20GNENS
+TTA20BNEBS
+TTA20BNENS
+NFX-LTE-AA
+TP5
+TVU One
+ABS CEL
+LMU4233HE
+MP20A CBGW
+MP20A CG
+MP20A CGW
+MP20A CGW-V
+D210
+Smart Sensor GridAdvisor II
+GridAdvisor Series II smart sensor
+MP20A GW
+Telefone Celular de Mesa EPFS12
+499-6727
+iTR150s
+iTR155
+MiFi MF13
+KMiFi 100
+Vectura Smart Acess - VSA
+Vectura Smart Access - VSA
+M7 3G
+M7 3G PLUS
+M7 3G
+iPad Pro 12.9” (Cellular + Wi-Fi)
+IR829GW-LTE-LA-ZK9
+IR829M-LTE-LA-ZK9
+SIP-2
+IR829B-LTE-LA-ZK9
+SmartFlex SR303
+SmartOne Solar
+SP630
+SLD-AR
+SLD-AS
+EDA70-3
+Omnidriver
+VELOH SMART
+ATM-02-ROW-R1
+ATM-02-ROW-T1
+CPE LTE TDD OUTDOOR - EPRL14 - ELSYS
+Compaq
+Camaro
+Blue
+SilverFox
+BlackShark
+RI4450-ME
+RI4450
+iPad (Wi-Fi + Cellular)
+ePMP 1000 CONNECTORIZED RADIO
+MDVR A5-E0804/A5-E0804
+UnifyVehicle
+MGC-22E
+CLS1
+FHT
+ET56
+8'' Enterprise Tablet
+FHT
+Digi XBee 3 Cellular LTE-M/NB-IoT Modem
+PROSB-2000/01
+PROSB-2000/OLE
+PROSB-2008/2GB
+SAMBA-BL10
+MC27
+Amplimax
+EPRL13
+Amplimax FIT
+Amplimax
+C300 4G
+Gateway
+Dell Edge Gateway 3000
+Dell Edge Gateway 3001
+Dell Edge Gateway 3002
+Dell Edge Gateway 3003
+VDO100 ou VDO
+RMBU 3GTR
+MEI53.R210
+CPE LTE Outdoor K21
+AUTOID Pad
+AUTOBOX
+RT72V3
+D195
+MD16-WC12
+ITU Premium CAN RW
+Latitude 7200 2-in-1
+PowerMaster-10 Triple G2
+PowerMaster-360R
+TLK100i
+TLK 100i
+Módulo 4G Mini VIAWEB
+Módulo 4G Mini Vanguard
+Módulo 4G Mini Logix
+Módulo IoT
+Adaptador IoT VIAWEB
+Adaptador IoT Vanguard
+Adaptador IoT Logix
+KDB1+KDB2
+BB 1-F ou BB 2-F
+BB 5-F ou BB 10-F
+i80
+DX Router G4
+DX Router 4G
+FX30 LTE Cat M1/NB1
+FX30S LTE CatM1/NB1
+D200
+V3690
+V3690 EMV
+VAI
+Flexcomm 3
+GT6
+PTB8RSG 4G
+PTB8RRG 4G
+OD310
+TS600 MODEM
+V240M
+VL08
+D210
+S116
+RT10A
+RI4450-ME
+XG3780M35
+XG3780M30
+XG3780M31
+XG3780M32
+XG3780M33
+XG3780M34
+i90
+i50
+SXLTE230
+G510
+THREAD X3
+PT7000
+MCD-030 - MONILOGGER
+Dashcam
+SMARTPRO 4KHD
+RT10W
+T810
+E500
+Farmnavigator
+1 Minute RTK Slot
+Tablet
+MAX TRANSIT DUO
+MAG X 3G
+EBS-GSM
+V2
+NetBox Duo
+GO9 Rugged
+GO9
+CWR-128
+ET56
+Moto tab G70 LTE
+M10 3G
+Router AVI LTE 8445 EAMv3-MC 7455 Sierra
+12-00843-00 Carrier
+M10A 3G
+RS123w-4G
+TBM 2
+T03H004 / T03H003
+T03H003
+Mi TV Stick
+KOHMNECT KMT 1000
+MAX TAB
+MOTE LIGHT
+CMWA6600
+CMWA 6600 e CMWA 6600-EX
+YDB-20906900
+YDB-LEDW2400
+P&CM2 4G WW
+VW8ZGPRSIP
+Central VW8Z GPRS IP Star
+VW8ZGPRS
+Central VW8Z GPRS Star
+NIC DLMS NB-IoT E BLE
+N/A
+NEW SCORPION
+D210
+SARA-R410M-02B
+APX NEXTi Full Band
+APX NEXTi
+APX NEXTi Single/Dual Band
+SARA-R412M-02B
+N75
+MPOS
+FortiWiFi 40F-3G4Gxxxxxx
+FORTIWIFI-40F-3G4Gxxxxxx
+FWF-40F-3G4Gxxxxxx
+FortiGate 40F-3G4Gxxxxxx
+FORTIGATE-40F-3G4Gxxxxxx
+FG-40F-3G4Gxxxxxx
+GO9-LTM e GO9B
+LTE Module
+NPT02 SA
+HCV5
+LCV5
+IR1821-K9
+IR1831-K9
+IR1833-K9
+IR1835-K9
+UnniTI
+Pro5
+HCV5
+LCV5
+Pro5
+Body Camera
+Enhanced Cell Modem (eCM) RD-AA8190-01
+InGateway 902
+PRD10843
+PRD10844
+311C
+311B
+311A
+Vectura Smart Access - VSA - B2.
+V240M
+V240m Plus 3GBWU
+RP Printer Pós Android Q2i
+CoreHP-WWG
+CoreLP-WWGB
+CoreLP-WG 256G
+PC500CL
+PC550CL
+NETWORK AGGREGATION DEVICE
+Web Livecast / LIVECAST PRO
+BCBR708G (MiFi)
+Tablet Famix F10L
+7.x Lite
+T2 MINI
+GT 1030
+Nokia T20
+CAY5V1.0
+YNET 4G DV
+YNET 4G D
+YNET 4G V
+WI03-MLX8
+PowerNET A-067
+PowerNET A-068
+Nexx 6xxx*
+CSG730
+CSG750
+CSG770
+CSG750
+CSG770
+CSG750
+CSG770
+CSG750-2LA
+CSG770-2LA
+SPLICE GATEWAY
+WEMOB Wall
+WEMOB Parking
+ZT866 TV BOX 4K ZTE
+Fly Tech H618 Atouch
+FPAD H618
+Pro5 Lite
+Roku Express 4K
+B500
+SmartRView controller
+CL-20
+IMAGEVOX ANDROID TV
+TGU-R ACCESS BAT 4G EU
+TE590P
+ND67
+ND-67
+UG67
+UG-67
+L2s
+S920
+V2 PRO
+V3-400P
+Lenovo Tab P11 Plus 4G
+Parquímetro Street
+Oneblock
+Projetor Inteligente Xiaomi até 120" versão 2
+MDTV-4K
+JDLink R Modem
+Cello IQ30
+Cello IQ40
+Cello IQ50
+SCALANCE MUM853-1
+SCALANCE MUM856-1
+TempTale Geo/VizComm View LTE
+TempTale Geo/VizComm View Ultra
+TempTale Geo/VizComm View Ultra Dry Ice
+TempTale Geo/VizComm View LTE Extended
+TempTale Geo/VizComm View Ultra Extended
+TempTale Geo/VizComm View Ultra Dry Ice Extended
+Temp Tale Geo/VizComm View LTE
+LiveLink 4
+V210
+BeLeno Turbo 10.1
+BeLeno Diamond 10.1
+BeLeno Turbo 10.1
+BeLeno Diamond
+BeLeno Midband 10.1
+BeLeno Neod 8
+Edge 610LTE-RW
+RCU de Conectividade
+N/A
+LMU2630MB-HP00
+LMU2630MB-HPG0
+Enterprise Tablet
+MF971L
+Hipraject
+NG2 4G 5.1
+NG2 4G 5.2
+NG 41
+AMPLIMAX FIT
+Galaxy Tab A8
+PINACULO MP-1T 3G COLETIVO
+PINACULO MP-2T 3G
+PINACULO MP-TR 3G
+HxGN MineProtect OAS-LV - 211
+JM-VL01LA
+BCM 5000 Defense
+BCM 5000 Defense 1 TB
+BCM 5000 Defense 32 GB
+BCM 5000 Defense 64 GB
+BCM 5000 Defense 128 GB
+BCM 5000 Defense 256 GB
+BCM 5000 Defense 512 GB
+SkyLink
+GT 41 e GT650 4G
+TGU-R ACCESS BAT 4G W
+NT-1004G
+NT-1002G
+Dvalin
+TLK 150
+Chorus Scout v2.1.5
+Enterprise Tablet
+MO-303G
+VSA 250 C1
+VSR 250
+TracPhone V7 HTS
+IDIS2GO Multi-parameter Vital Signs Monitor HMS750
+Latitude 7230 Rugged Extreme Tablet
+B300
+DA800C-CRM02.01
+C1111-4PLTELA
+C1111-8PLTELA
+C1111-8PLTELAWZ
+V240m Plus
+V240m Plus 3GBW
+Scout v2.2
+Scout v2.3
+Tablet
+Nokia T10
+RI4450-ME
+SIM7600G R2
+N58
+B4 L1
+Delta Safe; Randon Smart
+SCALANCE M876-4
+VL-02
+TVR3
+ScanPal EDA61K
+Base Station 200
+Soil Scout
+ICR 1601G
+ICR-1601W
+Trace5
+GT1200 Trailer Tracking Device
+L2ks
+Connect S
+HxGN AgrOn Ti7+
+AtlasBox Standard
+AtlasBox Full
+5G Sub-6 GHz M.2 Module
+Dvalin
+Jupiter Prob IV
+TSC7
+Otodata Elite
+TABLET VEICULAR CR N776
+TABLET VEICULAR CR N777
+QCARD7280
+C450
+PHOENIX-PH347A
+iPad Pro 9.7" (Wi-Fi + Cellular)
+Iridium Go!
+Central VW16Z Star
+VW16Z Star
+VW16Z
+Central VW16Z IP Star
+VW16Z IP Star
+VW16Z IP
+Central VW16Z GPRS Star
+VW16Z GPRS Star
+VW16Z GPRS
+Central VW16Z GPRS IP Star
+VW16Z GPRS IP Star
+VW16Z GPRS IP
+GWW-2XXXBR
+GWW-3XXXXBR
+GP900
+Aprisa LTE
+ITG 201 LoRa Outdoor Everynet America
+ITG 201 LoRa Outdoor Khomp America
+RGP 4G
+Q60
+Connect Smart
+SenseAware M4
+SATURN1000 S1F2
+P&CM2 4G WW
+USR-MB706
+Platinum 8 Discrete
+Platinum 8 GMLAN
+PW1000
+IDP-782 Cellular
+ViawebGprs_HW30_GL865
+ViawebGprsIp_HW30_GL865
+VIAWEB GPRS IP
+Módulo GPRS IP Universal
+Módulo VIAWEB GPRS IP
+VIAWEB GPRS
+Módulo GPRS Universal
+Módulo VIAWEB GPRS
+Edge Gateway 5000
+Edge Gateway 5100
+Conversor multimidia entreterimento TVBOX
+MAX X 4G
+MAX X GF
+G0305C100+AG001
+Mototrbo Ion
+Argus MIT
+TGW3
+DynaGateway
+DynaGateway LRD
+DynaGateway DUO
+S-01
+TSC5
+VIRCOM 07
+Connect Smart 5.70
+GT2h
+GT2c
+QConnec
+CloudBoxx 4G EU
+HCE 320
+4G Cellular Router
+Treon Gateway In Protective Enclosure
+DreamStation Cellular Modem
+FortiExtender 211Exxxxxx
+FORTIEXTENDER-211Exxxxxx
+FEX-211Exxxxxx
+Cisco ISR1100-4GL TEGB
+HxGN AgrOn Ti10
+DMT-22
+FC-6000
+PLACA DE CONECTIVIDADE IRIS
+Z-Q1
+Z-Q2
+Z-Q2S
+Z-Q5
+GO9
+GO9 RUGGED
+Nodegrid Gate SR
+Nodegrid Link SR
+Nodegrid Bold SR
+Nodegrid Services Router
+Arqia Turbo USB
+RGT
+VL12
+Gateway IoT
+STREAMING BOX
+L400
+R750
+MPS566
+9410-AUT
+X3N Pro-H0404
+X3N Pro
