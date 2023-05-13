@@ -15,9 +15,11 @@ def get_driver() -> webdriver:
     """
     options = webdriver.ChromeOptions()
     # options.add_argument('--headless')
-    # driver = webdriver.Chrome(options=options)
+    options.add_argument('--no-sandbox') 
     driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()),
-                              options = options)    
+                              options = options) 
+    driver.implicitly_wait(5)
+    driver.maximize_window()# Maximiza a janela
     
     return driver
 

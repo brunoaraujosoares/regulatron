@@ -52,19 +52,19 @@ def varrer_carrefour(produtos_selecionados):
 
         try:
             ultima_pagina = driver.find_elements(By.CLASS_NAME, 'carrefourbr-carrefour-components-0-x-Pagination_ItemsList')
-            ultima_pagina = ultima_pagina[0].find_elements(By.TAG_NAME, 'a')
-            ultima_pagina = ultima_pagina[-1].get_attribute('href') 
-            ultima_pagina = int(ultima_pagina[ultima_pagina.find('=')+1:])
+            ultima_pagina = ultima_pagina[0].find_elements(By.TAG_NAME, 'li')
+            ultima_pagina = int(ultima_pagina[-2].text.strip())
 
         except:
             ultima_pagina = 1
 
         for pagina in range(ultima_pagina):
+            print('pagina ', pagina+1 ,'de ' , ultima_pagina)
             if ( len(set_produtos) == limite_de_produtos ) and ( limite_de_produtos > 0 ) :
                 break
             
             try:
-                # print('pesquisando página ', pagina+1, 'de', ultima_pagina)
+                print('pesquisando página ', pagina+1, 'de', ultima_pagina)
                 wait_for_element(driver, 'styles_iconpack', 5 )
                 # sleep(3)
 
@@ -124,7 +124,10 @@ def capturar_detalhes_produtos_carrefour(dicionario, driver):
         yes_words = produtos_para_pesquisa[chave]["yes-words"]
         no_words  = produtos_para_pesquisa[chave]["no-words"]
 
+        contador = 0
         for item in dicionario[chave]:
+            contador = contador + 1
+            print('produto ', contador, 'de ', len(dicionario.keys()))
             try:
                 # navega até a página do produto
                 driver.get(item)
