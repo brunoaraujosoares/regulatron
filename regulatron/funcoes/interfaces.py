@@ -287,8 +287,6 @@ def  relatorio_de_pesquisa():
     janela.close()
     
     return 
-
-
    
 
 def editar_produto(janela, produto):
@@ -348,8 +346,8 @@ def adicionar_produto(janela):
 
     layout_add = [ # Define o layout da janela para adicionar um novo registro
         [sg.Text('Nome do produto:'), sg.Input(key='nome')],
-        [sg.Text('yes-words (separadas por vírgula):'), sg.Input(key='yes-words')],
-        [sg.Text('no-words (separadas por vírgula):'), sg.Input(key='no-words')],
+        [sg.Text('Black List (separadas por vírgula):'), sg.Input(key='yes-words')],
+        [sg.Text('White List (separadas por vírgula):'), sg.Input(key='no-words')],
         [sg.Button('Adicionar'), sg.Button('Cancelar')]
     ]
 

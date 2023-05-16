@@ -155,83 +155,87 @@ def capturar_detalhes_produtos(dicionario, driver):
         for item in dicionario[chave]:
             
             # navega até a página do produto
-            driver.get(item)
-            sleep(tempo_de_espera)
-            
             try:
-                titulo_produto = driver.find_element(By.CLASS_NAME, 'ui-pdp-title').text
-            except:
-                titulo_produto = ''
-
-            try:
-                id_vendedor    = driver.find_element(By.XPATH, '//*[@id="seller_info"]/div/a').get_attribute('href')
-                id_vendedor    = id_vendedor.split('/')[-1]
+                driver.get(item)
+                sleep(tempo_de_espera)
                 
-            except:
-                id_vendedor    = ''
-
-            try:        
-                preco = driver.find_element(By.CLASS_NAME, 'andes-money-amount__fraction').text
                 try:
-                    preco = float(preco + '.' + driver.find_element(By.CLASS_NAME, 'andes-money-amount__cents').text)
-                    preco = '{:0.2f}'.format(preco).replace('.', ',')                    
+                    titulo_produto = driver.find_element(By.CLASS_NAME, 'ui-pdp-title').text
                 except:
-                    pass
+                    titulo_produto = ''
 
-            except:
-                preco = ''
-                
-            try:
-                descricao      = driver.find_element(By.CLASS_NAME, 'ui-pdp-description__content').text[0:500]
-            except:
-                descricao      = ''
+                try:
+                    id_vendedor    = driver.find_element(By.XPATH, '//*[@id="seller_info"]/div/a').get_attribute('href')
+                    id_vendedor    = id_vendedor.split('/')[-1]
+                    
+                except:
+                    id_vendedor    = ''
 
-            # <span class="ui-pdp-buybox__quantity__available">(8 disponíveis)</span>
-            try:
-                quantidade     = driver.find_element(By.CLASS_NAME, 'ui-pdp-buybox__quantity__available').text
-                padrao = r'\((\d+)\s+\w+\)'
-                match = re.search(padrao, quantidade)
+                try:        
+                    preco = driver.find_element(By.CLASS_NAME, 'andes-money-amount__fraction').text
+                    try:
+                        preco = float(preco + '.' + driver.find_element(By.CLASS_NAME, 'andes-money-amount__cents').text)
+                        preco = '{:0.2f}'.format(preco).replace('.', ',')                    
+                    except:
+                        pass
 
-                if match:
-                    quantidade = int(match.group(1))
+                except:
+                    preco = ''
+                    
+                try:
+                    descricao      = driver.find_element(By.CLASS_NAME, 'ui-pdp-description__content').text[0:500]
+                except:
+                    descricao      = ''
 
+                # <span class="ui-pdp-buybox__quantity__available">(8 disponíveis)</span>
+                try:
+                    quantidade     = driver.find_element(By.CLASS_NAME, 'ui-pdp-buybox__quantity__available').text
+                    padrao = r'\((\d+)\s+\w+\)'
+                    match = re.search(padrao, quantidade)
+
+                    if match:
+                        quantidade = int(match.group(1))
+
+                    else:
+                        quantidade = 1 
+                except Exception as e:
+                    # print(e)
+                    quantidade     = 1
+
+                # # <strong class="ui-pdp-seller__sales-description">+100</strong>
+                # try:
+                #     quantidade_vendida     = driver.find_element(By.CLASS_NAME, 'ui-pdp-seller__sales-description').text
+                #     padrao = r'\((\d+)\s+\w+\)'
+                #     match = re.search(padrao, quantidade_vendida)
+
+                #     if match:
+                #         quantidade_vendida = int(match.group(1))
+
+                #     else:
+                #         quantidade_vendida = 1 
+                # except Exception as e:
+                #     print(e)
+                #     quantidade_vendida     = -1 
+
+                if testar_palavras(titulo_produto + ' ' + descricao, yes_words, no_words):
+                    homologado = 'CANDIDATO'
                 else:
-                    quantidade = 1 
-            except Exception as e:
-                # print(e)
-                quantidade     = 1
+                    homologado = ''
+                
+                dict_produtos['produto_pesquisado'].append(chave)
+                dict_produtos['titulo_produto'].append(titulo_produto) 
+                # dict_produtos['marca'].append(marca)
+                dict_produtos['id_vendedor'].append(id_vendedor)
+                dict_produtos['preco'].append(preco)
+                dict_produtos['quantidade'].append(quantidade)
+                dict_produtos['descricao'].append(descricao)
+                dict_produtos['homologado'].append(homologado)
+                dict_produtos['plataforma'].append('Mercado Livre')
+                dict_produtos['url'].append(item)
+                # dict_produtos['modelo'].append(modelo)
 
-            # # <strong class="ui-pdp-seller__sales-description">+100</strong>
-            # try:
-            #     quantidade_vendida     = driver.find_element(By.CLASS_NAME, 'ui-pdp-seller__sales-description').text
-            #     padrao = r'\((\d+)\s+\w+\)'
-            #     match = re.search(padrao, quantidade_vendida)
-
-            #     if match:
-            #         quantidade_vendida = int(match.group(1))
-
-            #     else:
-            #         quantidade_vendida = 1 
-            # except Exception as e:
-            #     print(e)
-            #     quantidade_vendida     = -1 
-
-            if testar_palavras(titulo_produto + ' ' + descricao, yes_words, no_words):
-                homologado = 'CANDIDATO'
-            else:
-                homologado = ''
-            
-            dict_produtos['produto_pesquisado'].append(chave)
-            dict_produtos['titulo_produto'].append(titulo_produto) 
-            # dict_produtos['marca'].append(marca)
-            dict_produtos['id_vendedor'].append(id_vendedor)
-            dict_produtos['preco'].append(preco)
-            dict_produtos['quantidade'].append(quantidade)
-            dict_produtos['descricao'].append(descricao)
-            dict_produtos['homologado'].append(homologado)
-            dict_produtos['plataforma'].append('Mercado Livre')
-            dict_produtos['url'].append(item)
-            # dict_produtos['modelo'].append(modelo)
+            except:
+                print('Não foi possível acessar ', item)
 
     salvar_dict_para_csv(dict_produtos, 'dados/resultado_mercado_livre.csv')
 

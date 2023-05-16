@@ -1,5 +1,5 @@
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException, WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.keys import Keys
@@ -7,13 +7,32 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
+# from selenium.webdriver.common.proxy import Proxy, ProxyTyhpe
+# https://hidemy.name/en/proxy-list/
+
+from random_user_agent.user_agent import UserAgent
+from random_user_agent.params import SoftwareName, OperatingSystem
 
 # funções do webdriver
 def get_driver() -> webdriver:
     """
     Retorna um objeto WebDriver para o Chrome.
     """
+    software_names    = [SoftwareName.CHROME.value]
     options = webdriver.ChromeOptions()
+
+    operating_systems = [
+                            OperatingSystem.WINDOWS.value,
+                            OperatingSystem.LINUX.value
+            	        ]
+    user_agent_rotator = UserAgent(
+                            software_names = software_names,
+                            operating_systems = operating_systems, 
+                            limit = 100
+                            )
+    user_agent = user_agent_rotator.get_random_user_agent()
+
+    options.add_argument(f'user-agent={user_agent}')
     # options.add_argument('--headless')
     options.add_argument('--no-sandbox') 
     driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()),

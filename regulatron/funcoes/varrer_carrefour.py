@@ -83,8 +83,8 @@ def varrer_carrefour(produtos_selecionados):
                 if pagina < ultima_pagina-1:
                     navigate_to_page(driver, f'https://www.carrefour.com.br/busca/{query}?page={pagina+2}')
                     
-            except:
-                pass
+            except Exception as e:
+                print(e)
 
         dict_produtos[chave_ext] = list(set_produtos)
 
@@ -143,8 +143,6 @@ def capturar_detalhes_produtos_carrefour(dicionario, driver):
                     print(e)
                     titulo_produto = ''
 
-                
-                # <span class="carrefourbr-carrefour-components-0-x-carrefourSeller b f5">Carrefour</span>
                 try:
                     try:
                         id_vendedor    = driver.find_element(
@@ -213,7 +211,8 @@ def capturar_detalhes_produtos_carrefour(dicionario, driver):
                 dict_produtos['url'].append(item)
                 # dict_produtos['modelo'].append(modelo)
 
-            except:
-                pass
+            except Exception as e:
+                print('Falhou em acessar ' , item)
+                print(e)
 
     salvar_dict_para_csv(dict_produtos, 'dados/resultado_mercado_livre.csv')
