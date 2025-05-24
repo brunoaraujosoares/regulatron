@@ -19,7 +19,7 @@ O sistema Tunga tem como objetivo auxiliar a fiscalização e o monitoramento de
 - `tunga_mercado_livre` – Coleta de produtos do [Mercado Livre](https://www.mercadolivre.com.br)
 - `tunga_shopee` – Coleta de produtos da [Shopee Brasil](https://shopee.com.br)
 
-> ⚠️ Os notebooks ainda não foram alterados desde sua última utilização e podem demandar ajustes conforme alterações nos sites-alvo, graças a mudanças ocorridas em suas diagramações ou atualizações das bibliotecas python
+> ⚠️ Os notebooks não foram alterados desde sua última utilização, em 2023, e podem demandar ajustes conforme alterações nos sites-alvo, graças a mudanças ocorridas em suas diagramações ou atualizações das bibliotecas python
 
 ---
 
