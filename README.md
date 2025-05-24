@@ -2,7 +2,7 @@
 
 Este repositório apresenta uma coleção de protótipos de **web scraping** desenvolvidos para identificar produtos cuja **venda não é permitida no Brasil**, com foco inicial em grandes marketplaces.
 
-O projeto teve início em **2023**, com o primeiro protótipo funcional implementado no notebook `tunga_mercado_livre.ipynb`, que realiza a coleta e análise de dados do site da Amazon Brasil.
+O projeto teve início em **2023**, com o primeiro protótipo funcional implementado no notebook `tunga_mercado_livre.ipynb`, que realiza a coleta e análise de dados do site do Mercado Livre do Brasil.
 
 ---
 
